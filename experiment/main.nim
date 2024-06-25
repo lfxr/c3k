@@ -39,7 +39,7 @@ func find(target, pattern: string): bool =
 
 
 func isItemTypes(itemType: ItemType, itemTypes: seq[ItemType]): bool =
-  itemType in itemTypes
+  not (itemType in itemTypes)
 
 
 func isItemName(name, pattern: string): bool =
