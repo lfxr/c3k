@@ -38,6 +38,10 @@ func find(target, pattern: string): bool =
   target.find(re(pattern)).isSome
 
 
+func isIgnore(path: string, ignores: seq[string]): bool =
+  ignores.filterIt(path.find(it)).len > 0
+
+
 func isItemTypes(itemType: ItemType, itemTypes: seq[ItemType]): bool =
   not (itemType in itemTypes)
 
@@ -50,9 +54,11 @@ func isItemExt(ext, pattern: string): bool =
   not ext.find(pattern)
 
 
-proc scan*(rules: seq[Rule]): ScanResult =
+proc scan*(rules: seq[Rule], ignores: seq[string]): ScanResult =
   for rule in rules:
     for item in walkDir(rule.path.expandTilde):
+      if isIgnore(item.path, ignores):
+        continue
       let
         itemType =
           if item.path.fileExists: file
