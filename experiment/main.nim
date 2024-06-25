@@ -63,7 +63,9 @@ proc scan*(rules: seq[Rule], ignores: seq[string]): ScanResult =
         itemType =
           if item.kind == pcFile: file
           else: dir
-        itemName = item.path.splitFile.name
+        itemName =
+          if itemType == file: item.path.splitFile.name
+          else: item.path.lastPathPart
         itemExt = item.path.splitFile.ext
       let reasons: seq[Reason] = @[
           (reason: Reason.itemType, result: isItemTypes(itemType, rule.itemTypes)),
