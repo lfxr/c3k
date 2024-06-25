@@ -61,7 +61,7 @@ proc scan*(rules: seq[Rule], ignores: seq[string]): ScanResult =
         continue
       let
         itemType =
-          if item.path.fileExists: file
+          if item.kind == pcFile: file
           else: dir
         itemName = item.path.splitFile.name
         itemExt = item.path.splitFile.ext
