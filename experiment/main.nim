@@ -34,8 +34,8 @@ type ScanResult = tuple[
 ]
 
 
-func match(target, pattern: string): bool =
-  target.match(re(pattern)).isSome
+func find(target, pattern: string): bool =
+  target.find(re(pattern)).isSome
 
 
 func isItemTypes(itemType: ItemType, itemTypes: seq[ItemType]): bool =
@@ -43,11 +43,11 @@ func isItemTypes(itemType: ItemType, itemTypes: seq[ItemType]): bool =
 
 
 func isItemName(name, pattern: string): bool =
-  not name.match(pattern)
+  not name.find(pattern)
 
 
 func isItemExt(ext, pattern: string): bool =
-  not ext.match(pattern)
+  not ext.find(pattern)
 
 
 proc scan*(rules: seq[Rule]): ScanResult =
