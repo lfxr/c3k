@@ -9,15 +9,12 @@ type ItemType = enum
   dir
 
 
-type Rule = tuple[
+type Rule* = tuple[
   path: string,
   itemTypes: seq[ItemType],
   itemName: string,
   itemExt: string,
 ]
-
-
-type Rules* = seq[Rule]
 
 
 type Reason {.pure.} = enum
@@ -53,7 +50,7 @@ func isItemExt(ext, pattern: string): bool =
   not ext.match(pattern)
 
 
-proc scan*(rules: Rules): ScanResult =
+proc scan*(rules: seq[Rule]): ScanResult =
   for rule in rules:
     for item in walkDir(rule.path.expandTilde):
       let
