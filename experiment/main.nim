@@ -12,6 +12,7 @@ type ItemType = enum
 type Rule* = tuple[
   path: string,
   itemTypes: seq[ItemType],
+  itemFullname: string,
   itemName: string,
   itemExt: string,
 ]
@@ -19,6 +20,7 @@ type Rule* = tuple[
 
 type Reason {.pure.} = enum
   itemType,
+  itemFullName,
   itemName,
   itemExt,
 
@@ -46,6 +48,10 @@ func isItemTypes(itemType: ItemType, itemTypes: seq[ItemType]): bool =
   not (itemType in itemTypes)
 
 
+func isItemFullName(name, pattern: string): bool =
+  not name.find(pattern)
+
+
 func isItemName(name, pattern: string): bool =
   not name.find(pattern)
 
@@ -69,6 +75,10 @@ proc scan*(rules: seq[Rule], ignores: seq[string]): ScanResult =
         itemExt = item.path.splitFile.ext
       let reasons: seq[Reason] = @[
           (reason: Reason.itemType, result: isItemTypes(itemType, rule.itemTypes)),
+          (
+            reason: Reason.itemFullName,
+            result: isItemFullName(item.path.extractFilename, rule.itemFullname)
+          ),
           (reason: Reason.itemName, result: isItemName(itemName, rule.itemName)),
           (reason: Reason.itemExt, result: isItemExt(itemExt, rule.itemExt)),
         ].filterIt(it.result).mapIt(it.reason)
