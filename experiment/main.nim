@@ -1,12 +1,35 @@
 import
   os,
   nre,
-  sequtils
+  sequtils,
+  math
 
 
 type ItemType = enum
   file,
   dir
+
+
+type ComparisonOperator* = enum
+  lessThan,
+  lessThanOrEqual,
+  greaterThan,
+  greaterThanOrEqual,
+  equal,
+
+
+type DataUnit* = enum
+  byte = 1,
+  kibibyte = 1024,
+  mebibyte = 1024 ^ 2,
+  gibibyte = 1024 ^ 3,
+
+
+type Size* = tuple[
+  comparisonOperator: ComparisonOperator,
+  size: int,
+  unit: DataUnit
+]
 
 
 type Rule* = tuple[
@@ -15,6 +38,7 @@ type Rule* = tuple[
   itemFullname: string,
   itemName: string,
   itemExt: string,
+  itemSize: Size
 ]
 
 
@@ -23,6 +47,7 @@ type Reason {.pure.} = enum
   itemFullName,
   itemName,
   itemExt,
+  itemSize,
 
 
 type ScanResult = tuple[
@@ -60,6 +85,27 @@ func isItemExt(ext, pattern: string): bool =
   not ext.find(pattern)
 
 
+func comparisonFunc()
+
+
+func isItemSize(actualSizeBytes: int, expectedSize: Size): bool =
+  let comparisonFunc = func (a, b: int): bool =
+    case expectedSize.comparisonOperator:
+      of ComparisonOperator.lessThan:
+        a < b
+      of ComparisonOperator.lessThanOrEqual:
+        a <= b
+      of ComparisonOperator.greaterThan:
+        a > b
+      of ComparisonOperator.greaterThanOrEqual:
+        a >= b
+      of ComparisonOperator.equal:
+        a == b
+  return not comparisonFunc(
+    actualSizeBytes, expectedSize.size * expectedSize.unit.int
+  )
+
+
 proc scan*(rules: seq[Rule], ignores: seq[string]): ScanResult =
   for rule in rules:
     for item in walkDir(rule.path.expandTilde):
@@ -81,6 +127,10 @@ proc scan*(rules: seq[Rule], ignores: seq[string]): ScanResult =
           ),
           (reason: Reason.itemName, result: isItemName(itemName, rule.itemName)),
           (reason: Reason.itemExt, result: isItemExt(itemExt, rule.itemExt)),
+          (
+            reason: Reason.itemSize,
+            result: isItemSize(item.path.getFileSize, rule.itemSize)
+          ),
         ].filterIt(it.result).mapIt(it.reason)
       echo reasons
       if reasons.len == 0:
