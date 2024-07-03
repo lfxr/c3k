@@ -85,9 +85,6 @@ func isItemExt(ext, pattern: string): bool =
   not ext.find(pattern)
 
 
-func comparisonFunc()
-
-
 func isItemSize(actualSizeBytes: int, expectedSize: Size): bool =
   let comparisonFunc = func (a, b: int): bool =
     case expectedSize.comparisonOperator:
