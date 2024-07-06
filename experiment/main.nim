@@ -1,8 +1,12 @@
 import
+  options,
   os,
   nre,
   sequtils,
-  math
+  strutils,
+  math,
+  types,
+  result
 
 
 type ItemType = enum
@@ -11,11 +15,19 @@ type ItemType = enum
 
 
 type ComparisonOperator* = enum
-  lessThan,
-  lessThanOrEqual,
-  greaterThan,
-  greaterThanOrEqual,
-  equal,
+  lessThan           = "<",
+  lessThanOrEqual    = "<=",
+  greaterThan        = ">",
+  greaterThanOrEqual = ">=",
+  equal              = "==",
+
+
+const DataUnits = (
+  byte: "B",
+  kibibyte: "KiB",
+  mebibyte: "MiB",
+  gibibyte: "GiB",
+)
 
 
 type DataUnit* = enum
@@ -59,6 +71,31 @@ type ScanResult = tuple[
     ]
   ]
 ]
+
+
+proc parseSize*(size: string): Result[Size] =
+  let rawSize = size.split(re"(<|<=|>|>=|(\d|\.)+)").filterIt(it != "")
+  if rawSize.len > 3:
+    result.error = option(Error(
+      kind: ErrorKind.invalidSizeSpecification,
+    ))
+    return
+  result.result.comparisonOperator =
+    case rawSize[0]:
+    of $lessThan: lessThan
+    of $lessThanOrEqual: lessThanOrEqual
+    of $greaterThan: greaterThan
+    of $greaterThanOrEqual: greaterThanOrEqual
+    of $equal: equal
+    else: equal
+  result.result.size = rawSize[1].parseInt
+  result.result.unit =
+    case rawSize[2]:
+    of DataUnits.byte: byte
+    of DataUnits.kibibyte: kibibyte
+    of DataUnits.mebibyte: mebibyte
+    of DataUnits.gibibyte: gibibyte
+    else: byte
 
 
 func find(target, pattern: string): bool =
