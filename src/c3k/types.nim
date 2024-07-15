@@ -1,5 +1,6 @@
 import
-  math
+  math,
+  options
 
 
 type ItemType* = enum
@@ -40,8 +41,8 @@ type Rule* = tuple[
 
 
 type Settings* = object
-  ignores: seq[string]
-  rules: seq[Rule]
+  ignores*: seq[string]
+  rules*: seq[Rule]
 
 
 type RuleYaml* = tuple[
@@ -55,5 +56,5 @@ type RuleYaml* = tuple[
 
 
 type SettingsYaml* = object
-  ignores: seq[string]
-  rules: seq[RuleYaml]
+  ignores*: seq[string]
+  rules*: seq[RuleYaml]

@@ -14,15 +14,15 @@ func echoMessage(prefix, body: Message): string =
 
 proc scan() =
   let m17n = m17n(ja_JP)
-  let settingsFilepath = ".c3k.yaml"
-  let settingsYaml = loadYaml(settingsFilepath)
-  let settings = parseSettingsYaml(settingsYaml)
-  let prefix = multiLangMessages.prefixes.info
-  let body = multiLangMessages.bodies.usingXAsASettingFile(settingsFilepath)
+  let settingsFilepath = "src/.c3k.yaml"
   echo echoMessage(
-    prefix.m17n,
-    body.m17n
+    m17n(multiLangMessages.prefixes.info),
+    m17n(multiLangMessages.bodies.usingXAsASettingFile(settingsFilepath))
   )
+  let settingsYaml = loadYaml(settingsFilepath)
+  echo settingsYaml
+  let settings = parseSettingsYaml(settingsYaml)
+  echo settings
 
 
 when isMainModule:
