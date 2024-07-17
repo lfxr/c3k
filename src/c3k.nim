@@ -13,6 +13,8 @@ proc scan() =
   echo settingsYaml
   let settings = parseSettingsYaml(settingsYaml)
   echo settings
+  let scanResult = scan(settings, proc()=discard)
+  echo scanResult
 
 
 when isMainModule:

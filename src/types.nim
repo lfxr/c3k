@@ -1,3 +1,7 @@
+import
+  c3k/types
+
+
 type Language* = enum
   ja_JP,
   en_GB
@@ -39,4 +43,23 @@ type MultiLangMessage* = tuple[
     emoji: string,
     text: MultiLang,
   ],
+]
+
+
+type ScanningFailureReason* {.pure.} = enum
+  itemType,
+  itemFullname,
+  itemName,
+  itemExt,
+  itemSize,
+
+
+type ScanResult* = tuple[
+  #成功したかどうか
+  succeeded: bool,
+  failedItems: seq[tuple[
+    itemPath: string,
+    itemType: ItemType,
+    reasons: seq[ScanningFailureReason],
+  ]],
 ]

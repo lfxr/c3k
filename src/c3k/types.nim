@@ -1,6 +1,7 @@
 import
   math,
-  options
+  options,
+  os
 
 
 type ItemType* = enum
@@ -58,3 +59,9 @@ type RuleYaml* = tuple[
 type SettingsYaml* = object
   ignores*: seq[string]
   rules*: seq[RuleYaml]
+
+
+type Item* = tuple[
+  kind: PathComponent,
+  path: string,
+]
