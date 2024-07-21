@@ -2,7 +2,8 @@ import
   m17n,
   messages,
   types,
-  c3k/main
+  c3k/main,
+  c3k/scan_result
 
 
 proc scan() =
@@ -18,6 +19,7 @@ proc scan() =
   echo scanResult
   m17nEcho multiLangMessages.scanFinishedSuccessfuly
   #m17nEcho multiLangMessages.scanResult(scanResult)
+  echo scanResult.format
 
 
 when isMainModule:
