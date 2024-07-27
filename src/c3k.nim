@@ -14,7 +14,6 @@ proc scan() =
   let settingYaml = loadYaml(settingFilePath)
   echo settingYaml
   let setting = parseSettingsYaml(settingYaml)
-  echo setting
   let scanResult = scan(setting, proc()=discard)
   echo scanResult
   m17nEcho multiLangMessages.scanFinishedSuccessfuly

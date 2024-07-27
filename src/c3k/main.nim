@@ -1,5 +1,6 @@
 import
   nre,
+  options,
   os,
   sequtils,
   strutils,
@@ -41,13 +42,13 @@ proc parseSize*(size: string): Size =
     else: byte
 
 
-proc loadYaml*(filePath: string): SettingYaml = 
+proc loadYaml*(filePath: string): SettingYaml =
   var s = newFileStream(filePath)
   load(s, result)
   s.close()
 
 
-func parseSettingsYaml*(settingYaml: SettingYaml): Setting =
+proc parseSettingsYaml*(settingYaml: SettingYaml): Setting =
   let rules: seq[Rule] = settingYaml.rules.mapIt(
     (
       path: it.path,
@@ -55,7 +56,9 @@ func parseSettingsYaml*(settingYaml: SettingYaml): Setting =
       itemFullname: it.itemFullname,
       itemName: it.itemName,
       itemExt: it.itemExt,
-      itemSize: it.itemSize.parseSize,
+      itemSize:
+        if it.itemSize.isSome: some(it.itemSize.get.parseSize)
+        else: none(Size),
     )
   )
   return Setting(
@@ -120,27 +123,40 @@ proc scan(item: Item, rule: Rule): seq[ScanningFailureReason] =
       else: item.path.lastPathPart
     itemExt = item.path.splitFile.ext
     itemSize = item.path.getFileSize
-
   return @[
     (
       failureReason: ScanningFailureReason.itemType,
-      result: checkItemType(itemType, rule.itemTypes)
+      result:
+        if rule.itemTypes.isSome: checkItemType(itemType, rule.itemTypes.get)
+        else: true,
     ),
     (
       failureReason: ScanningFailureReason.itemFullname,
-      result: checkItemFullname(itemFullname, rule.itemFullname)
+      result:
+        if rule.itemFullname.isSome:
+          checkItemFullname(itemFullname, rule.itemFullname.get)
+        else: true,
     ),
     (
       failureReason: ScanningFailureReason.itemName,
-      result: checkItemName(itemName, rule.itemName)
+      result:
+        if rule.itemName.isSome:
+          checkItemName(itemName, rule.itemName.get)
+        else: true,
     ),
     (
       failureReason: ScanningFailureReason.itemExt,
-      result: checkItemExt(itemExt, rule.itemExt)
+      result:
+        if rule.itemExt.isSome:
+          checkItemExt(itemExt, rule.itemExt.get)
+        else: true,
     ),
     (
       failureReason: ScanningFailureReason.itemSize,
-      result: checkItemSize(itemSize, rule.itemSize)
+      result:
+        if rule.itemSize.isSome:
+          checkItemSize(itemSize, rule.itemSize.get)
+        else: true,
     )
   ].filterIt(not it.result).mapIt(it.failureReason)
 

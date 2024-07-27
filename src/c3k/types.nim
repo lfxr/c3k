@@ -3,6 +3,9 @@ import
   options,
   os
 
+import
+  yaml
+
 
 type ItemType* = enum
   file,
@@ -33,11 +36,11 @@ type Size* = tuple[
 
 type Rule* = tuple[
   path: string,
-  itemTypes: seq[ItemType],
-  itemFullname: string,
-  itemName: string,
-  itemExt: string,
-  itemSize: Size,
+  itemTypes: Option[seq[ItemType]],
+  itemFullname: Option[string],
+  itemName: Option[string],
+  itemExt: Option[string],
+  itemSize: Option[Size],
 ]
 
 
@@ -46,14 +49,13 @@ type Setting* = object
   rules*: seq[Rule]
 
 
-type RuleYaml* = tuple[
-  path: string,
-  itemTypes: seq[ItemType],
-  itemFullname: string,
-  itemName: string,
-  itemExt: string,
-  itemSize: string,
-]
+type RuleYaml* = object
+  path*: string
+  itemTypes* {.defaultVal: none(seq[ItemType]).}: Option[seq[ItemType]]
+  itemFullname* {.defaultVal: none(string).}: Option[string]
+  itemName* {.defaultVal: none(string).}: Option[string]
+  itemExt* {.defaultVal: none(string).}: Option[string]
+  itemSize* {.defaultVal: none(string).}: Option[string]
 
 
 type SettingYaml* = object
