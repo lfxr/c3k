@@ -41,14 +41,14 @@ proc parseSize*(size: string): Size =
     else: byte
 
 
-proc loadYaml*(filePath: string): SettingsYaml = 
+proc loadYaml*(filePath: string): SettingYaml = 
   var s = newFileStream(filePath)
   load(s, result)
   s.close()
 
 
-func parseSettingsYaml*(settingsYaml: SettingsYaml): Settings =
-  let rules: seq[Rule] = settingsYaml.rules.mapIt(
+func parseSettingsYaml*(settingYaml: SettingYaml): Setting =
+  let rules: seq[Rule] = settingYaml.rules.mapIt(
     (
       path: it.path,
       itemTypes: it.itemTypes,
@@ -58,8 +58,8 @@ func parseSettingsYaml*(settingsYaml: SettingsYaml): Settings =
       itemSize: it.itemSize.parseSize,
     )
   )
-  return Settings(
-    ignores: settingsYaml.ignores,
+  return Setting(
+    ignores: settingYaml.ignores,
     rules: rules,
   )
 
@@ -145,12 +145,12 @@ proc scan(item: Item, rule: Rule): seq[ScanningFailureReason] =
   ].filterIt(not it.result).mapIt(it.failureReason)
 
 
-proc scan*(settings: Settings, fn: proc()): ScanResult =
+proc scan*(setting: Setting, fn: proc()): ScanResult =
   result.succeeded = true
 
-  for rule in settings.rules:
+  for rule in setting.rules:
     for item in walkDir(rule.path.expandTilde):
-      if isIgnore(item.path, settings.ignores):
+      if isIgnore(item.path, setting.ignores):
         continue
 
       let scanningFailureReasons = item.scan(rule)

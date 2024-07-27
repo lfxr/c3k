@@ -8,14 +8,14 @@ import
 
 proc scan() =
   let m17nEcho = m17nEcho(ja_JP)
-  let settingsFilepath = "src/.c3k.yaml"
-  m17nEcho multiLangMessages.usingXAsASettingFile(settingsFilepath)
+  let settingFilePath = "src/.c3k.yaml"
+  m17nEcho multiLangMessages.usingXAsASettingFile(settingFilePath)
   m17nEcho multiLangMessages.loadingAndParsingSettingFile
-  let settingsYaml = loadYaml(settingsFilepath)
-  echo settingsYaml
-  let settings = parseSettingsYaml(settingsYaml)
-  echo settings
-  let scanResult = scan(settings, proc()=discard)
+  let settingYaml = loadYaml(settingFilePath)
+  echo settingYaml
+  let setting = parseSettingsYaml(settingYaml)
+  echo setting
+  let scanResult = scan(setting, proc()=discard)
   echo scanResult
   m17nEcho multiLangMessages.scanFinishedSuccessfuly
   #m17nEcho multiLangMessages.scanResult(scanResult)

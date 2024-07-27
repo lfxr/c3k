@@ -41,7 +41,7 @@ type Rule* = tuple[
 ]
 
 
-type Settings* = object
+type Setting* = object
   ignores*: seq[string]
   rules*: seq[Rule]
 
@@ -56,7 +56,7 @@ type RuleYaml* = tuple[
 ]
 
 
-type SettingsYaml* = object
+type SettingYaml* = object
   ignores*: seq[string]
   rules*: seq[RuleYaml]
 
