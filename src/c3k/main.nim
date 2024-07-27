@@ -3,6 +3,7 @@ import
   options,
   os,
   sequtils,
+  strformat,
   strutils,
   streams
 
@@ -161,11 +162,12 @@ proc scan(item: Item, rule: Rule): seq[ScanningFailureReason] =
   ].filterIt(not it.result).mapIt(it.failureReason)
 
 
-proc scan*(setting: Setting, fn: proc()): ScanResult =
+proc scan*(setting: Setting, workingDirPath: string, fn: proc()): ScanResult =
   result.succeeded = true
 
+  setCurrentDir(workingDirPath)
   for rule in setting.rules:
-    for item in walkDir(rule.path.expandTilde):
+    for item in walkDir(rule.path.absolutePath):
       if isIgnore(item.path, setting.ignores):
         continue
 
