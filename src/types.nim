@@ -55,8 +55,8 @@ type ScanningFailureReason* {.pure.} = enum
 
 
 type ScanResult* = tuple[
-  #成功したかどうか
   succeeded: bool,
+  totalItems: Natural,
   failedItems: seq[tuple[
     itemPath: string,
     itemType: ItemType,

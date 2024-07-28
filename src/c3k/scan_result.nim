@@ -14,9 +14,9 @@ proc format*(scanResult: ScanResult): string =
   t2.separateRows = false
   t2.setHeaders(
     @[
-      newCell("パス", rightpad=10),
-      newCell("タイプ", pad=2),
-      newCell("理由", 5)
+      newCell("パス", rightpad=25),
+      newCell("タイプ", rightpad=5),
+      newCell("理由", rightpad=5)
     ]
   )
   for failedItem in scanResult.failedItems:

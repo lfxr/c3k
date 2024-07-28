@@ -168,6 +168,7 @@ proc scan*(setting: Setting, workingDirPath: string, fn: proc()): ScanResult =
   setCurrentDir(workingDirPath)
   for rule in setting.rules:
     for item in walkDir(rule.path.absolutePath):
+      result.totalItems += 1
       if isIgnore(item.path, setting.ignores):
         continue
 

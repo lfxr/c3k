@@ -38,11 +38,12 @@ proc scanCommand(args: seq[string]) =
   let setting = parseSettingsYaml(settingYaml)
   let scanResult = scan(setting, appDirPath, proc()=discard)
   m17nEcho multiLangMessages.scanFinishedSuccessfuly
-  m17nEcho multiLangMessages.XImproperItemsOutOfYItemFound(
-    scanResult.failedItems.len, 0
-  )
-  # m17nEcho multiLangMessages.scanResult(scanResult)
-  echo scanResult.format
+  if not scanResult.succeeded:
+    m17nEcho multiLangMessages.XImproperItemsOutOfYItemFound(
+      scanResult.failedItems.len, scanResult.totalItems
+    )
+    # m17nEcho multiLangMessages.scanResult(scanResult)
+    echo scanResult.format
 
 
 when isMainModule:
