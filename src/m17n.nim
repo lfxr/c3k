@@ -27,6 +27,7 @@ func serialize(message: Message): string =
     prefix = message.prefix
     body = message.body
   return &"""[{prefix.emoji} {prefix.text}] {body.emoji} {body.text}"""
+  # return &"""[{prefix.text}]: {body.emoji} {body.text}"""
 
 
 func m17nEcho*(lang: Language): proc(message: MultiLangMessage) =

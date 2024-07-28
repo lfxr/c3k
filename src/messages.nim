@@ -2,6 +2,9 @@ import
   strformat
 
 import
+  rainbow
+
+import
   types
 
 
@@ -9,22 +12,22 @@ const multiLangPrefixes = (
   info: (
     emoji: "ℹ️",
     text: (
-      ja_JP: "情報",
-      en_GB: "INFO",
+      ja_JP: "情報".rfCyan,
+      en_GB: "INFO".rfCyan,
     )
   ),
   warning: (
     emoji: "⚠️",
     text: (
-      ja_JP: "警告",
-      en_GB: "WARN",
+      ja_JP: "警告".rbYellow.rfBlack,
+      en_GB: "WARN".rbYellow.rfBlack,
     ),
   ),
   error: (
     emoji: "❌",
     text: (
-      ja_JP: "エラー",
-      en_GB: "ERRR",
+      ja_JP: "エラー".rbFuchsia.rfBlack,
+      en_GB: "ERRR".rbFuchsia.rfBlack,
     ),
   ),
 )
