@@ -31,6 +31,56 @@ const multiLangPrefixes = (
 
 
 const multiLangMessages* = (
+  startingInitialization: (
+    prefix: multiLangPrefixes.info,
+    body: (
+      emoji: "🚀",
+      text: (
+        ja_JP: "初期準備を開始しています",
+        en_GB: "Starting initialization",
+      ),
+    ),
+  ),
+  initializationFinished: (
+    prefix: multiLangPrefixes.info,
+    body: (
+      emoji: "✅",
+      text: (
+        ja_JP: "初期準備が完了しました",
+        en_GB: "Initialization finished",
+      ),
+    ),
+  ),
+  creatingAppDirectory: (
+    prefix: multiLangPrefixes.info,
+    body: (
+      emoji: "🚀",
+      text: (
+        ja_JP: "アプリケーションディレクトリを作成しています",
+        en_GB: "Creating the application directory",
+      ),
+    ),
+  ),
+  creatingSettingFile: (
+    prefix: multiLangPrefixes.info,
+    body: (
+      emoji: "🚀",
+      text: (
+        ja_JP: "設定ファイルを作成しています",
+        en_GB: "Creating the setting file",
+      ),
+    ),
+  ),
+  settingFileCreated: (
+    prefix: multiLangPrefixes.info,
+    body: (
+      emoji: "✅",
+      text: (
+        ja_JP: "設定ファイルが作成されました",
+        en_GB: "Setting file created",
+      ),
+    ),
+  ),
   usingXAsASettingFile: proc(x: string): MultiLangMessage = (
     prefix: multiLangPrefixes.info,
     body: (
