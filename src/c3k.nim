@@ -48,7 +48,7 @@ proc scanCommand(args: seq[string]) =
   let settingYaml = loadYaml(settingFilePath)
   let setting = parseSettingsYaml(settingYaml)
 
-  let scanResult = scan(setting, appDirPath, proc()=discard)
+  let scanResult = scan(setting, appDirPath, fn=proc()=discard)
   m17nEcho mlm.scanFinishedSuccessfuly
   if not scanResult.succeeded:
     m17nEcho mlm.XImproperItemsOutOfYItemFound(

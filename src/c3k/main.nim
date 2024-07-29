@@ -16,6 +16,7 @@ import
   types
 
 
+const HomeDirPath = getHomeDir()
 const DataUnits = (
   byte: "B",
   kibibyte: "KiB",
@@ -42,6 +43,10 @@ proc parseSize*(size: string): Size =
     of DataUnits.mebibyte: mebibyte
     of DataUnits.gibibyte: gibibyte
     else: byte
+
+
+func unexpandTilde(path: string): string =
+  return path.replace(re("^" & HomeDirPath), "~" & DirSep)
 
 
 proc loadYaml*(filePath: string): SettingYaml =
@@ -168,7 +173,12 @@ proc scan(item: Item, rule: Rule): seq[ScanningFailureReason] =
   ].filterIt(not it.result).mapIt(it.failureReason)
 
 
-proc scan*(setting: Setting, workingDirPath: string, fn: proc()): ScanResult =
+proc scan*(
+    setting: Setting,
+    workingDirPath: string,
+    unexpandTilde: bool = true,
+    fn: proc()
+): ScanResult =
   result.succeeded = true
 
   setCurrentDir(workingDirPath)
@@ -184,7 +194,9 @@ proc scan*(setting: Setting, workingDirPath: string, fn: proc()): ScanResult =
 
       result.succeeded = false
       result.failedItems.add((
-        itemPath: item.path,
+        itemPath:
+          if unexpandTilde: item.path.unexpandTilde
+          else: item.path,
         itemType: item.itemType,
         reasons: scanningFailureReasons,
       ))
