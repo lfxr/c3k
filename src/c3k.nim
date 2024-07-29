@@ -9,40 +9,52 @@ import
   c3k/scan_result
 
 
-let appDirPath = getConfigDir() / "c3k"
-let settingFilePath = appDirPath / "c3k.setting.yaml"
-let m17nEcho = m17nEcho(ja_JP)
+const mlm = multiLangMessages
+let
+  appDirPath = getConfigDir() / "c3k"
+  settingFilePath = appDirPath / "c3k.setting.yaml"
+  m17nEcho = m17nEcho(ja_JP)
 
 
 proc initCommand(args: seq[string]) =
-  m17nEcho multiLangMessages.startingInitialization
+  m17nEcho mlm.startingInitialization
+
   # アプリディレクトリが存在しない場合は作成する
   if not appDirPath.dirExists:
-    m17nEcho multiLangMessages.creatingAppDirectory
+    m17nEcho mlm.creatingAppDirectory
     createDir appDirPath
+
   # 設定ファイルが存在しない場合は作成する
   if not settingFilePath.fileExists:
-    m17nEcho multiLangMessages.creatingSettingFile
+    m17nEcho mlm.creatingSettingFile
     let settingFile = open(settingFilePath, fmWrite)
     defer: settingFile.close()
-    settingFile.write("")
-    m17nEcho multiLangMessages.settingFileCreated
-  m17nEcho multiLangMessages.initializationFinished
+    try:
+      settingFile.write("")
+    except:
+      m17nEcho mlm.failedToCreateSettingFile
+      return
+    m17nEcho mlm.settingFileCreated
+  m17nEcho mlm.initializationFinished
 
 
 proc scanCommand(args: seq[string]) =
   let settingFilePath = "src/.c3k.yaml"
-  m17nEcho multiLangMessages.usingXAsASettingFile(settingFilePath)
-  m17nEcho multiLangMessages.loadingAndParsingSettingFile
+  if not settingFilePath.fileExists:
+    m17nEcho mlm.noSettingFileDetected
+    return
+  m17nEcho mlm.usingXAsASettingFile(settingFilePath)
+  m17nEcho mlm.loadingAndParsingSettingFile
   let settingYaml = loadYaml(settingFilePath)
   let setting = parseSettingsYaml(settingYaml)
+
   let scanResult = scan(setting, appDirPath, proc()=discard)
-  m17nEcho multiLangMessages.scanFinishedSuccessfuly
+  m17nEcho mlm.scanFinishedSuccessfuly
   if not scanResult.succeeded:
-    m17nEcho multiLangMessages.XImproperItemsOutOfYItemFound(
+    m17nEcho mlm.XImproperItemsOutOfYItemFound(
       scanResult.failedItems.len, scanResult.totalItems
     )
-    # m17nEcho multiLangMessages.scanResult(scanResult)
+    # m17nEcho mlm.scanResult(scanResult)
     echo scanResult.format
 
 

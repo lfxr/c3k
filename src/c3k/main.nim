@@ -8,7 +8,8 @@ import
   streams
 
 import
-  yaml
+  yaml,
+  yaml/parser
 
 import
   ../types,
@@ -45,7 +46,12 @@ proc parseSize*(size: string): Size =
 
 proc loadYaml*(filePath: string): SettingYaml =
   var s = newFileStream(filePath)
-  load(s, result)
+  try:
+    load(s, result)
+  except IOError, OSError:
+    echo "o"
+  except YamlConstructionError, YamlParserError:
+    echo "p"
   s.close()
 
 

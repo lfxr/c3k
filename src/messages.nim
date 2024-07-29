@@ -84,6 +84,16 @@ const multiLangMessages* = (
       ),
     ),
   ),
+  failedToCreateSettingFile: (
+    prefix: multiLangPrefixes.error,
+    body: (
+      emoji: "❌",
+      text: (
+        ja_JP: "設定ファイルの作成に失敗しました",
+        en_GB: "Failed to create the setting file",
+      ),
+    ),
+  ),
   usingXAsASettingFile: proc(x: string): MultiLangMessage = (
     prefix: multiLangPrefixes.info,
     body: (

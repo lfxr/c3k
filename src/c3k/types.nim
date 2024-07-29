@@ -67,3 +67,19 @@ type Item* = tuple[
   kind: PathComponent,
   path: string,
 ]
+
+
+type ErrorKind* = enum
+  invalidYaml,
+  ioError,
+  osError,
+
+
+type Error* = object of CatchableError
+  case kind*: ErrorKind
+    of invalidYaml:
+      path*: string
+    of ioError:
+      ioErrorObject*: ref IOError
+    of osError:
+      osErrorObject*: ref OSError
