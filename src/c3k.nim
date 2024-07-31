@@ -2,6 +2,9 @@ import
   os
 
 import
+  yaml/tojson
+
+import
   m17n,
   messages,
   types,
@@ -39,14 +42,16 @@ proc initCommand(args: seq[string]) =
 
 
 proc scanCommand(args: seq[string]) =
-  let settingFilePath = "src/.c3k.yaml"
+  let settingFilePath = "src/.c3k.new.yaml"
   if not settingFilePath.fileExists:
     m17nEcho mlm.noSettingFileDetected
     return
   m17nEcho mlm.usingXAsASettingFile(settingFilePath)
   m17nEcho mlm.loadingAndParsingSettingFile
-  let settingYaml = loadYaml(settingFilePath)
-  let setting = parseSettingsYaml(settingYaml)
+  # let settingYaml = loadYaml(settingFilePath)
+  # let setting = parseSettingsYaml(settingYaml)
+  let settingJson = loadJson(settingFilePath)
+  let setting = parseSettingJson(settingJson)
 
   let scanResult = scan(setting, appDirPath, fn=proc()=discard)
   m17nEcho mlm.scanFinishedSuccessfuly

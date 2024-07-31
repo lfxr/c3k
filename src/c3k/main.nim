@@ -1,15 +1,17 @@
 import
+  json,
   nre,
   options,
   os,
   sequtils,
-  strformat,
   strutils,
-  streams
+  streams,
+  tables
 
 import
   yaml,
-  yaml/parser
+  yaml/parser,
+  yaml/tojson
 
 import
   ../types,
@@ -60,6 +62,10 @@ proc loadYaml*(filePath: string): SettingYaml =
   s.close()
 
 
+proc loadJson*(path: string): JsonNode =
+  newFileStream(path).loadToJson[0]
+
+
 proc parseSettingsYaml*(settingYaml: SettingYaml): Setting =
   let rules: seq[Rule] = settingYaml.rules.mapIt(
     (
@@ -75,6 +81,48 @@ proc parseSettingsYaml*(settingYaml: SettingYaml): Setting =
   )
   return Setting(
     ignores: settingYaml.ignores,
+    rules: rules,
+  )
+
+
+proc parseSettingJson*(settingJson: JsonNode): Setting =
+  func generateRule(ruleJson: JsonNode): Option[string] =
+    if ruleJson != nil:
+      some(ruleJson.getStr)
+    else:
+      none(string)
+  proc generateSizeRule(ruleJson: JsonNode): Option[Size] =
+    if ruleJson != nil:
+      some(ruleJson.getStr.parseSize)
+    else:
+      none(Size)
+  func generateTypesRule(ruleJson: JsonNode): Option[seq[ItemType]] =
+    if ruleJson == nil:
+      none(seq[ItemType])
+    else:
+      ## TODO: error handling
+      some ruleJson.getElems.mapIt((
+        case it.getStr:
+          of "file": file
+          of "dir": dir
+          else: file
+      ))
+
+  let rulesJson = settingJson["rules"]
+  var rules: seq[Rule] = @[]
+  for key in rulesJson.getFields.keys:
+    let ruleJson = rulesJson[key]
+    rules.add (
+      path: key,
+      itemTypes: generateTypesRule(ruleJson{"itemTypes"}),
+      itemFullname: generateRule(ruleJson{"itemFullname"}),
+      itemName: generateRule(ruleJson{"itemName"}),
+      itemExt: generateRule(ruleJson{"itemExt"}),
+      itemSize: generateSizeRule(ruleJson{"itemSize"}),
+    )
+      
+  return Setting(
+    ignores: settingJson["ignores"].getElems.mapIt($it),
     rules: rules,
   )
 
