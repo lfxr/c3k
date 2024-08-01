@@ -233,8 +233,11 @@ proc scan*(
 
   setCurrentDir(workingDirPath)
   for rule in setting.rules:
-    let matchedPaths =
+    let matchedPathsByGlob =
       walkGlob(rule.path).toSeq.mapIt(it.splitFile.dir).deduplicate
+    let matchedPaths =
+      if matchedPathsByGlob.len == 0: walkPattern(rule.path).toSeq
+      else: matchedPathsByGlob
     for matchedPath in matchedPaths:
       for item in walkDir(matchedPath):
         result.totalItems += 1
