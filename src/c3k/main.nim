@@ -66,7 +66,7 @@ proc loadJson*(path: string): JsonNode =
   newFileStream(path).loadToJson[0]
 
 
-proc parseSettingsYaml*(settingYaml: SettingYaml): Setting =
+proc parseSettingYaml*(settingYaml: SettingYaml): Setting =
   let rules: seq[Rule] = settingYaml.rules.mapIt(
     (
       path: it.path,
