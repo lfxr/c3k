@@ -91,7 +91,7 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
       some(ruleJson.getStr)
     else:
       none(string)
-  proc generateSizeRule(ruleJson: JsonNode): Option[Size] =
+  func generateSizeRule(ruleJson: JsonNode): Option[Size] =
     if ruleJson != nil:
       some(ruleJson.getStr.parseSize)
     else:
@@ -122,7 +122,7 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
     )
       
   return Setting(
-    ignores: settingJson["ignores"].getElems.mapIt($it),
+    ignores: settingJson["ignores"].getElems.mapIt(it.getStr),
     rules: rules,
   )
 
@@ -234,7 +234,7 @@ proc scan*(
     for matchedPath in walkPattern(rule.path):
       for item in walkDir(matchedPath):
         result.totalItems += 1
-        if isIgnore(item.path, setting.ignores):
+        if isIgnore(item.path.relativePath(matchedPath), setting.ignores):
           continue
 
         let scanningFailureReasons = item.scan(rule)
