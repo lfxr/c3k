@@ -13,6 +13,8 @@ import
   yaml/parser,
   yaml/tojson
 
+from glob import walkGlob
+
 import
   ../types,
   types
@@ -231,7 +233,9 @@ proc scan*(
 
   setCurrentDir(workingDirPath)
   for rule in setting.rules:
-    for matchedPath in walkPattern(rule.path):
+    let matchedPaths =
+      walkGlob(rule.path).toSeq.mapIt(it.splitFile.dir).deduplicate
+    for matchedPath in matchedPaths:
       for item in walkDir(matchedPath):
         result.totalItems += 1
         if isIgnore(item.path.relativePath(matchedPath), setting.ignores):
