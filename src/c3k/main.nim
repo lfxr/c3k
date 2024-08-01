@@ -73,7 +73,7 @@ proc parseSettingsYaml*(settingYaml: SettingYaml): Setting =
       itemTypes: it.itemTypes,
       itemFullname: it.itemFullname,
       itemName: it.itemName,
-      itemExt: it.itemExt,
+      ext: it.ext,
       itemSize:
         if it.itemSize.isSome: some(it.itemSize.get.parseSize)
         else: none(Size),
@@ -117,7 +117,7 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
       itemTypes: generateTypesRule(ruleJson{"itemTypes"}),
       itemFullname: generateRule(ruleJson{"itemFullname"}),
       itemName: generateRule(ruleJson{"itemName"}),
-      itemExt: generateRule(ruleJson{"itemExt"}),
+      ext: generateRule(ruleJson{"ext"}),
       itemSize: generateSizeRule(ruleJson{"itemSize"}),
     )
       
@@ -152,8 +152,8 @@ func checkItemName(itemName, pattern: string): bool =
   itemName.find(pattern)
 
 
-func checkItemExt(itemExt, pattern: string): bool =
-  itemExt.find(pattern)
+func checkExt(ext, pattern: string): bool =
+  ext.find(pattern)
 
 
 func checkItemSize(actualSizeBytes: int, expectedSize: Size): bool =
@@ -181,7 +181,7 @@ proc scan(item: Item, rule: Rule): seq[ScanningFailureReason] =
     itemName =
       if itemType == file: item.path.splitFile.name
       else: item.path.lastPathPart
-    itemExt = item.path.splitFile.ext
+    ext = item.path.splitFile.ext
     itemSize = item.path.getFileSize
   return @[
     (
@@ -205,10 +205,10 @@ proc scan(item: Item, rule: Rule): seq[ScanningFailureReason] =
         else: true,
     ),
     (
-      failureReason: ScanningFailureReason.itemExt,
+      failureReason: ScanningFailureReason.ext,
       result:
-        if rule.itemExt.isSome:
-          checkItemExt(itemExt, rule.itemExt.get)
+        if itemType == file and rule.ext.isSome:
+          checkExt(ext, rule.ext.get)
         else: true,
     ),
     (

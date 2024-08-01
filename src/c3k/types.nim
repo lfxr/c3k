@@ -39,7 +39,7 @@ type Rule* = tuple[
   itemTypes: Option[seq[ItemType]],
   itemFullname: Option[string],
   itemName: Option[string],
-  itemExt: Option[string],
+  ext: Option[string],
   itemSize: Option[Size],
 ]
 
@@ -54,7 +54,7 @@ type RuleYaml* = object
   itemTypes* {.defaultVal: none(seq[ItemType]).}: Option[seq[ItemType]]
   itemFullname* {.defaultVal: none(string).}: Option[string]
   itemName* {.defaultVal: none(string).}: Option[string]
-  itemExt* {.defaultVal: none(string).}: Option[string]
+  ext* {.defaultVal: none(string).}: Option[string]
   itemSize* {.defaultVal: none(string).}: Option[string]
 
 

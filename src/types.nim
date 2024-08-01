@@ -50,7 +50,7 @@ type ScanningFailureReason* {.pure.} = enum
   itemType,
   itemFullname,
   itemName,
-  itemExt,
+  ext,
   itemSize,
 
 
