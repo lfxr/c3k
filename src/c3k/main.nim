@@ -231,20 +231,21 @@ proc scan*(
 
   setCurrentDir(workingDirPath)
   for rule in setting.rules:
-    for item in walkDir(rule.path.absolutePath):
-      result.totalItems += 1
-      if isIgnore(item.path, setting.ignores):
-        continue
+    for matchedPath in walkPattern(rule.path):
+      for item in walkDir(matchedPath):
+        result.totalItems += 1
+        if isIgnore(item.path, setting.ignores):
+          continue
 
-      let scanningFailureReasons = item.scan(rule)
-      if scanningFailureReasons.len == 0:
-        continue
+        let scanningFailureReasons = item.scan(rule)
+        if scanningFailureReasons.len == 0:
+          continue
 
-      result.succeeded = false
-      result.failedItems.add((
-        itemPath:
-          if unexpandTilde: item.path.unexpandTilde
-          else: item.path,
-        itemType: item.itemType,
-        reasons: scanningFailureReasons,
-      ))
+        result.succeeded = false
+        result.failedItems.add((
+          itemPath:
+            if unexpandTilde: item.path.unexpandTilde
+            else: item.path,
+          itemType: item.itemType,
+          reasons: scanningFailureReasons,
+        ))
