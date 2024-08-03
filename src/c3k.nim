@@ -2,9 +2,6 @@ import
   os
 
 import
-  yaml/tojson
-
-import
   m17n,
   messages,
   types,
