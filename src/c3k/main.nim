@@ -16,7 +16,6 @@ import
 from glob import walkGlob
 
 import
-  ../types,
   types
 
 

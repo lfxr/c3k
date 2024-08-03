@@ -1,7 +1,3 @@
-import
-  c3k/types
-
-
 type Language* = enum
   ja_JP,
   en_GB

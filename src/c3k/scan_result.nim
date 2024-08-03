@@ -5,7 +5,6 @@ import
   terminaltables
 
 import
-  ../types,
   types
 
 
