@@ -83,3 +83,22 @@ type Error* = object of CatchableError
       ioErrorObject*: ref IOError
     of osError:
       osErrorObject*: ref OSError
+
+
+type ScanningFailureReason* {.pure.} = enum
+  itemType,
+  itemFullname,
+  itemName,
+  ext,
+  itemSize,
+
+
+type ScanResult* = tuple[
+  succeeded: bool,
+  totalItems: Natural,
+  failedItems: seq[tuple[
+    itemPath: string,
+    itemType: ItemType,
+    reasons: seq[ScanningFailureReason],
+  ]],
+]
