@@ -29,7 +29,7 @@ const DataUnits = (
 )
 
 
-proc parseSize*(size: string): Size =
+func parseSize(size: string): Size =
   let rawSize = size.split(re"(<|<=|>|>=|(\d|\.)+)").filterIt(it != "")
   result.comparisonOperator =
     case rawSize[0]:
