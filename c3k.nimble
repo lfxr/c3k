@@ -22,6 +22,11 @@ requires "rainbow == 0.2.2"
 
 # Tasks
 
+task precommit, "Run all precommit tasks":
+  exec "nimble markdownlint"
+  exec "nimble typos"
+  exec "nimble lslint"
+
 task markdownlint, "Lint markdown files":
   exec "markdownlint-cli2 **/*.md"
 
