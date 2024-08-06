@@ -19,3 +19,14 @@ requires "glob == 0.11.3"
 requires "terminaltables == 0.1.1"
 requires "cligen == 1.7.2"
 requires "rainbow == 0.2.2"
+
+# Tasks
+
+task markdownlint, "Lint markdown files":
+  exec "markdownlint-cli2 **/*.md"
+
+task typos, "Check for typos":
+  exec "typos"
+
+task lslint, "Lint file and directory names":
+  exec "ls-lint"
