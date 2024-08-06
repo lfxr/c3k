@@ -20,7 +20,7 @@ const DataUnits = (
 
 
 func parseSize*(size: string): Size =
-  let rawSize = size.split(re"(<|<=|>|>=|(\d|\.)+)").filterIt(it != "")
+  let rawSize = size.split(re"(<=|>=|<|>|\d+)").filterIt(it != "")
   result.comparisonOperator =
     case rawSize[0]:
     of $lessThan: lessThan
