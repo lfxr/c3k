@@ -1,0 +1,7 @@
+ls:
+  .nim: snake_case
+
+ignore:
+  - .git
+  - nimbledeps
+  - nimcache

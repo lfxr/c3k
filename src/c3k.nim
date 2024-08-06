@@ -51,7 +51,7 @@ proc scanCommand(args: seq[string]) =
   let setting = parseSettingJson(settingJson)
 
   let scanResult = scan(setting, appDirPath, fn=proc()=discard)
-  m17nEcho mlm.scanFinishedSuccessfuly
+  m17nEcho mlm.scanFinishedSuccessfully
   if not scanResult.succeeded:
     m17nEcho mlm.XImproperItemsOutOfYItemFound(
       scanResult.failedItems.len, scanResult.totalItems

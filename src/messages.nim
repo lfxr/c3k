@@ -154,13 +154,13 @@ const multiLangMessages* = (
       ),
     ),
   ),
-  scanFinishedSuccessfuly: (
+  scanFinishedSuccessfully: (
     prefix: multiLangPrefixes.info,
     body: (
       emoji: "✅",
       text: (
         ja_JP: "スキャンが正常に終了しました",
-        en_GB: "Scan finished successfuly",
+        en_GB: "Scan finished successfully",
       ),
     ),
   ),
