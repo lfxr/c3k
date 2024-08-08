@@ -8,8 +8,12 @@ import
   types
 
 
+func sandwichWithAnchors(pattern: string): string =
+  "^" & pattern & "$"
+
+
 func find(target, pattern: string): bool =
-  target.find(re(pattern)).isSome
+  target.find(pattern.sandwichWithAnchors.re).isSome
 
 
 func isIgnore*(path: string, ignores: seq[string]): bool =
