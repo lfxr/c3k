@@ -164,6 +164,16 @@ const multiLangMessages* = (
       ),
     ),
   ),
+  timeTakenForScanWasXMilliseconds: proc(x: float): MultiLangMessage = (
+    prefix: multiLangPrefixes.info,
+    body: (
+      emoji: "⏱ ",
+      text: (
+        ja_JP: &"スキャンに要した時間: {x} ms",
+        en_GB: &"Time taken for scan: {x} ms",
+      ),
+    ),
+  ),
   XImproperItemsOutOfYItemFound: proc(x, y: int): MultiLangMessage = (
     prefix: multiLangPrefixes.warning,
     body: (
