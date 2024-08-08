@@ -39,7 +39,6 @@ proc initCommand(args: seq[string]) =
 
 
 proc scanCommand(args: seq[string]) =
-  let settingFilePath = "src/.c3k.new.yaml"
   if not settingFilePath.fileExists:
     m17nEcho mlm.noSettingFileDetected
     return
