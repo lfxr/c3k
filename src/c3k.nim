@@ -1,5 +1,6 @@
 import
-  os
+  os,
+  times
 
 import
   m17n,
@@ -49,12 +50,16 @@ proc scanCommand(args: seq[string]) =
   let settingJson = loadJson(settingFilePath)
   let setting = parseSettingJson(settingJson)
 
+  let t1 = cpuTime()
   let scanResult = scan(setting, appDirPath, fn=proc()=discard)
+  let timeTakenForScanMilliseconds = (cpuTime() - t1) * 1000
+
   m17nEcho mlm.scanFinishedSuccessfully
   if not scanResult.succeeded:
     m17nEcho mlm.XImproperItemsOutOfYItemFound(
       scanResult.failedItems.len, scanResult.totalItems
     )
+    m17nEcho mlm.timeTakenForScanWasXMilliseconds(timeTakenForScanMilliseconds)
     # m17nEcho mlm.scanResult(scanResult)
     echo scanResult.format
 
