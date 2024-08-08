@@ -169,8 +169,8 @@ const multiLangMessages* = (
     body: (
       emoji: "⚠️",
       text: (
-        ja_JP: &"{x}個の不適切なアイテムが{y}個のアイテムの中で見つかりました",
-        en_GB: &"{x} improper items out of {y} items found",
+        ja_JP: &"{x}個の不適切なアイテムが{y}個のアイテムの中で見つかりました (不適切なアイテムの割合: {x/y*100}%)",
+        en_GB: &"{x} improper items out of {y} items found (improper item ratio: {x/y*100}%)",
       ),
     ),
   ),
