@@ -46,6 +46,15 @@ proc parseSettingYaml*(settingYaml: SettingYaml): Setting =
       itemSize:
         if it.itemSize.isSome: some(it.itemSize.get.parseSize)
         else: none(Size),
+      fileFullname: it.fileFullname,
+      fileName: it.fileName,
+      fileSize:
+        if it.fileSize.isSome: some(it.fileSize.get.parseSize)
+        else: none(Size),
+      dirName: it.dirName,
+      dirSize:
+        if it.dirSize.isSome: some(it.dirSize.get.parseSize)
+        else: none(Size),
     )
   )
   return Setting(
@@ -88,6 +97,11 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
       itemName: generateRule(ruleJson{"itemName"}),
       ext: generateRule(ruleJson{"ext"}),
       itemSize: generateSizeRule(ruleJson{"itemSize"}),
+      fileFullname: generateRule(ruleJson{"fileFullname"}),
+      fileName: generateRule(ruleJson{"fileName"}),
+      fileSize: generateSizeRule(ruleJson{"fileSize"}),
+      dirName: generateRule(ruleJson{"dirName"}),
+      dirSize: generateSizeRule(ruleJson{"dirSize"}),
     )
       
   return Setting(

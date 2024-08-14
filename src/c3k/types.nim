@@ -41,6 +41,11 @@ type Rule* = tuple[
   itemName: Option[string],
   ext: Option[string],
   itemSize: Option[Size],
+  fileFullname: Option[string],
+  fileName: Option[string],
+  fileSize: Option[Size],
+  dirName: Option[string],
+  dirSize: Option[Size],
 ]
 
 
@@ -56,6 +61,11 @@ type RuleYaml* = object
   itemName* {.defaultVal: none(string).}: Option[string]
   ext* {.defaultVal: none(string).}: Option[string]
   itemSize* {.defaultVal: none(string).}: Option[string]
+  fileFullname* {.defaultVal: none(string).}: Option[string]
+  fileName* {.defaultVal: none(string).}: Option[string]
+  fileSize* {.defaultVal: none(string).}: Option[string]
+  dirName* {.defaultVal: none(string).}: Option[string]
+  dirSize* {.defaultVal: none(string).}: Option[string]
 
 
 type SettingYaml* = object
@@ -91,6 +101,11 @@ type ScanningFailureReason* {.pure.} = enum
   itemName,
   ext,
   itemSize,
+  fileFullname,
+  fileName,
+  fileSize,
+  dirName,
+  dirSize,
 
 
 type ScanResult* = tuple[
