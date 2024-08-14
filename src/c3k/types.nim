@@ -36,6 +36,7 @@ type Size* = tuple[
 
 type Rule* = tuple[
   path: string,
+  ignores: Option[seq[string]],
   itemTypes: Option[seq[ItemType]],
   itemFullname: Option[string],
   itemName: Option[string],
@@ -56,6 +57,7 @@ type Setting* = object
 
 type RuleYaml* = object
   path*: string
+  ignores* {.defaultVal: none(seq[string]).}: Option[seq[string]]
   itemTypes* {.defaultVal: none(seq[ItemType]).}: Option[seq[ItemType]]
   itemFullname* {.defaultVal: none(string).}: Option[string]
   itemName* {.defaultVal: none(string).}: Option[string]
