@@ -69,9 +69,14 @@ Glob patterns can be used.
 | -------------- | ------------------------ | ----------------- | --------------------- |
 | `itemType`     | item type (file, dir)    | List<file\|dir>   | `[file]`              |
 | `itemFullname` | item name with extension | String (regex)    | `img_\d+.(jpg\|png)`  |
-| `itemName`     | item name                | String (regex)    | `img_\d+.(jpg\|png)`  |
+| `itemName`     | item name                | String (regex)    | `img_\d+`             |
 | `ext`          | extension                | String (regex)    | `.lnk`, `.(jpg\|png)` |
 | `itemSize`     | item size                | String (**Size**) | `>1KiB`, `<=5MiB`     |
+| `fileFullname` | file name with extension | String (regex)    | `img_\d+.(jpg\|png)`  |
+| `fileName`     | file name                | String (regex)    | `img_\d+`             |
+| `fileSize`     | file size                | String (**Size**) | `>1KiB`, `<=5MiB`     |
+| `dirName`      | directory name           | String (regex)    | `downloads_\d+`       |
+| `dirSize`      | directory size           | String (**Size**) | `>1KiB`, `<=5MiB`     |
 
 ### Value Types
 
