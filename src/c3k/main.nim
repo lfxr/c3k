@@ -39,6 +39,7 @@ proc parseSettingYaml*(settingYaml: SettingYaml): Setting =
   let rules: seq[Rule] = settingYaml.rules.mapIt(
     (
       path: it.path,
+      ignores: it.ignores,
       itemTypes: it.itemTypes,
       itemFullname: it.itemFullname,
       itemName: it.itemName,
@@ -74,6 +75,11 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
       some(ruleJson.getStr.parseSize)
     else:
       none(Size)
+  func generateIgnoresRule(ruleJson: JsonNode): Option[seq[string]] =
+    if ruleJson == nil:
+      none(seq[string])
+    else:
+      some ruleJson.getElems.mapIt(it.getStr)
   func generateTypesRule(ruleJson: JsonNode): Option[seq[ItemType]] =
     if ruleJson == nil:
       none(seq[ItemType])
@@ -92,6 +98,7 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
     let ruleJson = rulesJson[key]
     rules.add (
       path: key,
+      ignores: generateIgnoresRule(ruleJson{"ignores"}),
       itemTypes: generateTypesRule(ruleJson{"itemTypes"}),
       itemFullname: generateRule(ruleJson{"itemFullname"}),
       itemName: generateRule(ruleJson{"itemName"}),
@@ -129,6 +136,13 @@ proc scan*(
       for item in walkDir(matchedPath):
         result.totalItems += 1
         if isIgnore(item.path.relativePath(matchedPath), setting.ignores):
+          continue
+
+        if isIgnore(
+          item.path.relativePath(matchedPath),
+          if rule.ignores.isSome: rule.ignores.get
+          else: @[],
+        ):
           continue
 
         let scanningFailureReasons = item.scan(rule)
