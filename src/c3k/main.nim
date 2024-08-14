@@ -42,17 +42,23 @@ proc parseSettingYaml*(settingYaml: SettingYaml): Setting =
       ignores: it.ignores,
       itemTypes: it.itemTypes,
       itemFullname: it.itemFullname,
+      itemFullnames: it.itemFullnames,
       itemName: it.itemName,
+      itemNames: it.itemNames,
       ext: it.ext,
+      exts: it.exts,
       itemSize:
         if it.itemSize.isSome: some(it.itemSize.get.parseSize)
         else: none(Size),
       fileFullname: it.fileFullname,
+      fileFullnames: it.fileFullnames,
       fileName: it.fileName,
+      fileNames: it.fileNames,
       fileSize:
         if it.fileSize.isSome: some(it.fileSize.get.parseSize)
         else: none(Size),
       dirName: it.dirName,
+      dirNames: it.dirNames,
       dirSize:
         if it.dirSize.isSome: some(it.dirSize.get.parseSize)
         else: none(Size),
@@ -80,6 +86,11 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
       none(seq[string])
     else:
       some ruleJson.getElems.mapIt(it.getStr)
+  func generateStringSeqRule(ruleJson: JsonNode): Option[seq[string]] =
+    if ruleJson == nil:
+      none(seq[string])
+    else:
+      some ruleJson.getElems.mapIt(it.getStr)
   func generateTypesRule(ruleJson: JsonNode): Option[seq[ItemType]] =
     if ruleJson == nil:
       none(seq[ItemType])
@@ -101,13 +112,19 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
       ignores: generateIgnoresRule(ruleJson{"ignores"}),
       itemTypes: generateTypesRule(ruleJson{"itemTypes"}),
       itemFullname: generateRule(ruleJson{"itemFullname"}),
+      itemFullnames: generateStringSeqRule(ruleJson{"itemFullnames"}),
       itemName: generateRule(ruleJson{"itemName"}),
+      itemNames: generateStringSeqRule(ruleJson{"itemNames"}),
       ext: generateRule(ruleJson{"ext"}),
+      exts: generateStringSeqRule(ruleJson{"exts"}),
       itemSize: generateSizeRule(ruleJson{"itemSize"}),
       fileFullname: generateRule(ruleJson{"fileFullname"}),
+      fileFullnames: generateStringSeqRule(ruleJson{"fileFullnames"}),
       fileName: generateRule(ruleJson{"fileName"}),
+      fileNames: generateStringSeqRule(ruleJson{"fileNames"}),
       fileSize: generateSizeRule(ruleJson{"fileSize"}),
       dirName: generateRule(ruleJson{"dirName"}),
+      dirNames: generateStringSeqRule(ruleJson{"dirNames"}),
       dirSize: generateSizeRule(ruleJson{"dirSize"}),
     )
       
