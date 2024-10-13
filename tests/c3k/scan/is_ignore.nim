@@ -6,7 +6,12 @@ import
 
 
 check isIgnore("desktop.ini", @["desktop.ini"])
-check isIgnore("", @[".lock"])
-check isIgnore("", @[".lock"])
+check not isIgnore("desktop.ini", @["lock"])
 
-check isIgnore("", @[])
+check isIgnore("cache", @["cache"])
+check isIgnore("cache", @["bin", "cache"])
+
+check not isIgnore("", @[".lock"])
+check not isIgnore("", @[".lock"])
+
+check not isIgnore("", @[])
