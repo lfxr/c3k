@@ -34,31 +34,36 @@ type Size* = tuple[
 ]
 
 
-type Rule* = tuple[
+type Regulation* = tuple[
   path: string,
   ignores: Option[seq[string]],
-  itemTypes: Option[seq[ItemType]],
-  itemFullname: Option[string],
-  itemFullnames: Option[seq[string]],
-  itemName: Option[string],
-  itemNames: Option[seq[string]],
-  ext: Option[string],
-  exts: Option[seq[string]],
-  itemSize: Option[Size],
-  fileFullname: Option[string],
-  fileFullnames: Option[seq[string]],
-  fileName: Option[string],
-  fileNames: Option[seq[string]],
-  fileSize: Option[Size],
-  dirName: Option[string],
-  dirNames: Option[seq[string]],
-  dirSize: Option[Size],
+  rules: tuple[
+    currentDir: string, # 仮
+    childItems: tuple[
+      itemTypes: Option[seq[ItemType]],
+      itemFullname: Option[string],
+      itemFullnames: Option[seq[string]],
+      itemName: Option[string],
+      itemNames: Option[seq[string]],
+      ext: Option[string],
+      exts: Option[seq[string]],
+      itemSize: Option[Size],
+      fileFullname: Option[string],
+      fileFullnames: Option[seq[string]],
+      fileName: Option[string],
+      fileNames: Option[seq[string]],
+      fileSize: Option[Size],
+      dirName: Option[string],
+      dirNames: Option[seq[string]],
+      dirSize: Option[Size],
+    ],
+  ],
 ]
 
 
 type Setting* = object
   ignores*: seq[string]
-  rules*: seq[Rule]
+  regulations*: seq[Regulation]
 
 
 type RuleYaml* = object
@@ -84,7 +89,7 @@ type RuleYaml* = object
 
 type SettingYaml* = object
   ignores*: seq[string]
-  rules*: seq[RuleYaml]
+  regulations*: seq[RuleYaml]
 
 
 type Item* = tuple[
@@ -122,12 +127,17 @@ type ScanningFailureReason* {.pure.} = enum
   dirSize,
 
 
-type ScanResult* = tuple[
-  succeeded: bool,
-  totalItems: Natural,
-  failedItems: seq[tuple[
-    itemPath: string,
-    itemType: ItemType,
-    reasons: seq[ScanningFailureReason],
-  ]],
+type Violation* = tuple[
+  kind: ScanningFailureReason,
+  expected, actual: string,
 ]
+
+
+type ScanResult* = object
+  scannedItemsNumber*: Natural
+  violationItemsNumber*: Natural
+  violationItems*: seq[tuple[
+    path: string,
+    itemType: ItemType,
+    violations: seq[Violation],
+  ]]

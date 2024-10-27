@@ -25,137 +25,64 @@ func itemType*(item: Item): ItemType =
   else: dir
 
 
-func checkItemType(itemType: ItemType, itemTypes: seq[ItemType]): bool =
-  itemType in itemTypes
+type ItemMetaData = tuple[
+  path: string,
+  itemType: ItemType, 
+]
 
 
-func checkItemFullname(itemFullname, pattern: string): bool =
-  itemFullname.find(pattern)
+func metaData(item: Item): ItemMetaData =
+  (path: item.path, itemType: itemType(item))
 
 
-func checkItemName(itemName, pattern: string): bool =
-  itemName.find(pattern)
+type RuleProcResult = tuple[
+  succeeded: bool,
+  violation: Violation,
+]
 
 
-func checkExt(ext, pattern: string): bool =
-  ext.find(pattern)
+type ScanResult = tuple[
+  item: ItemMetaData,
+  subScanResults: seq[RuleProcResult],
+]
 
 
-func checkItemSize(actualSizeBytes: int, expectedSize: Size): bool =
-  let comparisonFunc = func (a, b: int): bool =
-    case expectedSize.comparisonOperator:
-      of ComparisonOperator.lessThan:
-        a < b
-      of ComparisonOperator.lessThanOrEqual:
-        a <= b
-      of ComparisonOperator.greaterThan:
-        a > b
-      of ComparisonOperator.greaterThanOrEqual:
-        a >= b
-      of ComparisonOperator.equal:
-        a == b
-  return comparisonFunc(
-    actualSizeBytes, expectedSize.size * expectedSize.unit.int
-  )
+type RuleProc = proc (item: ItemMetaData, regulation: Regulation)
 
 
-func checkFileFullname(fileFullname, pattern: string): bool =
-  checkItemFullname(fileFullname, pattern)
+type RuleProcs = seq[tuple[
+  procedure: RuleProc,
+  targetItemTypes: seq[ItemType],
+]]
 
 
-func checkFileName(fileName, pattern: string): bool =
-  checkItemName(fileName, pattern)
+proc itemType1(item: ItemMetaData, regulation: Regulation): RuleProcResult =
+  # 1は名前重複回避のため仮
+  let rule = regulation.rules.childItems.itemTypes
+  if rule.isNone:
+    result.succeeded = true
+    return
+  if item.itemType notin rule.get:
+    return (
+      succeeded: false,
+      violation: (
+        kind: ScanningFailureReason.itemType,
+        expected: $rule.get,
+        actual: $item.itemType
+      )
+    )
 
 
-func checkFileSize(actualSizeBytes: int, expectedSize: Size): bool =
-  checkItemSize(actualSizeBytes, expectedSize)
+const ruleProcs= @[
+  (procedure: itemType1, targetItemTypes: @[file, dir]),
+  # (function: ext, targetItemTypes: @[file]),
+  # (function: itemSize, targetItemTypes: @[file, dir]),
+]
 
 
-func checkDirName(dirName, pattern: string): bool =
-  checkItemName(dirName, pattern)
-
-
-func checkDirSize(actualSizeBytes: int, expectedSize: Size): bool =
-  checkItemSize(actualSizeBytes, expectedSize)
-
-
-proc scan*(item: Item, rule: Rule): seq[ScanningFailureReason] =
-  let
-    itemType = item.itemType
-    itemFullname = item.path.extractFilename
-    itemName =
-      if itemType == file: item.path.splitFile.name
-      else: item.path.lastPathPart
-    ext = item.path.splitFile.ext
-    itemSize = item.path.getFileSize
-  return @[
-    (
-      failureReason: ScanningFailureReason.itemType,
-      result:
-        if rule.itemTypes.isSome: checkItemType(itemType, rule.itemTypes.get)
-        else: true,
-    ),
-    (
-      failureReason: ScanningFailureReason.itemFullname,
-      result:
-        if rule.itemFullname.isSome:
-          checkItemFullname(itemFullname, rule.itemFullname.get)
-        else: true,
-    ),
-    (
-      failureReason: ScanningFailureReason.itemName,
-      result:
-        if rule.itemName.isSome:
-          checkItemName(itemName, rule.itemName.get)
-        else: true,
-    ),
-    (
-      failureReason: ScanningFailureReason.ext,
-      result:
-        if itemType == file and rule.ext.isSome:
-          checkExt(ext, rule.ext.get)
-        else: true,
-    ),
-    (
-      failureReason: ScanningFailureReason.itemSize,
-      result:
-        if rule.itemSize.isSome:
-          checkItemSize(itemSize, rule.itemSize.get)
-        else: true,
-    ),
-    (
-      failureReason: ScanningFailureReason.fileFullname,
-      result:
-        if itemType == file and rule.fileFullname.isSome:
-          checkFileFullname(itemFullname, rule.fileFullname.get)
-        else: true,
-    ),
-    (
-      failureReason: ScanningFailureReason.fileName,
-      result:
-        if itemType == file and rule.fileName.isSome:
-          checkFileName(itemName, rule.fileName.get)
-        else: true,
-    ),
-    (
-      failureReason: ScanningFailureReason.fileSize,
-      result:
-        if itemType == file and rule.fileSize.isSome:
-          checkFileSize(itemSize, rule.fileSize.get)
-        else: true,
-    ),
-    (
-      failureReason: ScanningFailureReason.dirName,
-      result:
-        if itemType == dir and rule.dirName.isSome:
-          checkDirName(itemName, rule.dirName.get)
-        else: true,
-    ),
-    (
-      failureReason: ScanningFailureReason.dirSize,
-      result:
-        if itemType == dir and rule.dirSize.isSome:
-          checkDirSize(itemSize, rule.dirSize.get)
-        else: true,
-    ),
-  ].filterIt(not it.result).mapIt(it.failureReason)
+proc scan*(item: Item, regulation: Regulation): seq[Violation] =
+  # ruleFuncには適切なitemtypeが保証されている
+  # そもそも用語の命名定義から始めた方が良い
+  echo regulation
+  # ruleProcsを適用
+  return ruleProcs.mapIt(it.procedure(item.metaData, regulation).violation)

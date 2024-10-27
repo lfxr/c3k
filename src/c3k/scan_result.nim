@@ -1,4 +1,5 @@
 import
+  sequtils,
   strutils
 
 import
@@ -15,9 +16,13 @@ proc format*(scanResult: ScanResult): string =
     @[
       newCell("パス", rightpad=25),
       newCell("タイプ", rightpad=5),
-      newCell("理由", rightpad=5)
+      newCell("理由", rightpad=5),
     ]
   )
-  for failedItem in scanResult.failedItems:
-    t2.addRow(@[failedItem.itemPath, $failedItem.itemType, $failedItem.reasons.join(", ")])
+  for violationItem in scanResult.violationItems:
+    t2.addRow(@[
+      violationItem.path,
+      $violationItem.itemType,
+      violationItem.violations.mapIt($it.kind).join(", "),
+    ])
   printTable(t2)
