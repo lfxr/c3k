@@ -55,13 +55,13 @@ proc scanCommand(args: seq[string]) =
   let timeTakenForScanMilliseconds = (cpuTime() - t1) * 1000
 
   m17nEcho mlm.scanFinishedSuccessfully
-  if not scanResult.succeeded:
-    m17nEcho mlm.XImproperItemsOutOfYItemFound(
-      scanResult.failedItems.len, scanResult.totalItems
-    )
-    m17nEcho mlm.timeTakenForScanWasXMilliseconds(timeTakenForScanMilliseconds)
-    # m17nEcho mlm.scanResult(scanResult)
-    echo scanResult.format
+  # if not scanResult.succeeded:
+  m17nEcho mlm.XImproperItemsOutOfYItemFound(
+    scanResult.violationItems.len, scanResult.scannedItemsNumber
+  )
+  m17nEcho mlm.timeTakenForScanWasXMilliseconds(timeTakenForScanMilliseconds)
+  # m17nEcho mlm.scanResult(scanResult)
+  echo scanResult.format
 
 
 when isMainModule:
