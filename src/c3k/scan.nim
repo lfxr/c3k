@@ -66,7 +66,7 @@ proc itemType1(item: ItemMetaData, regulation: Regulation): RuleProcResult =
     return (
       succeeded: false,
       violation: (
-        kind: ScanningFailureReason.itemType,
+        kind: ViolationKind.itemType,
         expected: $rule.get,
         actual: $item.itemType
       )
