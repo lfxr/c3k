@@ -160,24 +160,25 @@ proc scan*(
     for matchedPath in matchedPaths:
       for item in walkDir(matchedPath):
         result.scannedItemsNumber += 1
-        if isIgnore(item.path.relativePath(matchedPath), setting.ignores):
-          continue
+        # if isIgnore(item.path.relativePath(matchedPath), setting.ignores):
+        #   continue
 
-        if isIgnore(
-          item.path.relativePath(matchedPath),
-          if regulation.ignores.isSome: regulation.ignores.get
-          else: @[],
-        ):
-          continue
+        # if isIgnore(
+        #   item.path.relativePath(matchedPath),
+        #   if regulation.ignores.isSome: regulation.ignores.get
+        #   else: @[],
+        # ):
+        #   continue
 
-        let scanningFailureReasons = item.scan(regulation)
-        if scanningFailureReasons.len == 0:
+        let violations = item.scan(regulation)
+        if violations.len == 0:
           continue
 
         result.violationItems.add((
           path:
             if unexpandTilde: item.path.unexpandTilde
             else: item.path,
-          itemType: item.itemType,
-          violations: scanningFailureReasons,
+          # itemType: item.itemType,
+          itemType: file,
+          violations: violations,
         ))
