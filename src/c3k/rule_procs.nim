@@ -36,20 +36,20 @@ func metaData*(item: Item): ItemMetaData =
 
 
 type RuleProcResult = tuple[
-  succeeded: bool,
+  isViolated: bool,
   violation: Violation,
 ]
 
 
 proc itemType(item: ItemMetaData, regulation: Regulation): RuleProcResult =
-  # 1は名前重複回避のため仮
+  result.isViolated = false
+
   let rule = regulation.rules.childItems.itemTypes
   if rule.isNone:
-    result.succeeded = true
     return
   if item.itemType notin rule.get:
     return (
-      succeeded: false,
+      isViolated: true,
       violation: (
         kind: ViolationKind.itemType,
         expected: $rule.get,
