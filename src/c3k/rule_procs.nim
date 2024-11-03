@@ -28,11 +28,16 @@ func itemType*(item: Item): ItemType =
 type ItemMetaData = tuple[
   path: string,
   itemType: ItemType, 
+  ext: string,
 ]
 
 
 func metaData*(item: Item): ItemMetaData =
-  (path: item.path, itemType: itemType(item))
+  (
+    path: item.path,
+    itemType: itemType(item),
+    ext: item.path.splitFile.ext,
+  )
 
 
 type RuleProcResult = tuple[
@@ -41,7 +46,7 @@ type RuleProcResult = tuple[
 ]
 
 
-proc itemType(item: ItemMetaData, regulation: Regulation): RuleProcResult =
+func itemType(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
   let rule = regulation.rules.childItems.itemTypes
@@ -58,14 +63,51 @@ proc itemType(item: ItemMetaData, regulation: Regulation): RuleProcResult =
     )
 
 
+func ext(item: ItemMetaData, regulation: Regulation): RuleProcResult =
+  result.isViolated = false
+
+  let rule = regulation.rules.childItems.ext
+  if rule.isNone:
+    return
+  if item.ext != rule.get:
+    return (
+      isViolated: true,
+      violation: (
+        kind: ViolationKind.ext,
+        expected: rule.get,
+        actual: item.ext
+      )
+    )
+
+
+func exts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
+  result.isViolated = false
+
+  let rule = regulation.rules.childItems.exts
+  if rule.isNone:
+    return
+  if item.ext notin rule.get:
+    return (
+      isViolated: true,
+      violation: (
+        kind: ViolationKind.ext,
+        expected: $rule.get,
+        actual: item.ext
+      )
+    )
+
+
 type RuleProc = tuple[
-  procedure: proc(item: ItemMetaData, regulation: Regulation): RuleProcResult,
+  procedure:
+    proc(item: ItemMetaData, regulation: Regulation): RuleProcResult {.nimcall.},
   targetItemTypes: seq[ItemType]
 ]
 
 
-const RuleProcs*: seq[RuleProc] = @[
+let RuleProcs*: seq[RuleProc] = @[
   (procedure: itemType, targetItemTypes: @[file, dir]),
+  (procedure: ext, targetItemTypes: @[file]),
+  (procedure: exts, targetItemTypes: @[file]),
   # (function: ext, targetItemTypes: @[file]),
   # (function: itemSize, targetItemTypes: @[file, dir]),
 ]
