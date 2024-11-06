@@ -5,6 +5,7 @@ import
   os,
   sequtils,
   streams,
+  strutils,
   tables
 
 import
@@ -16,6 +17,7 @@ from glob import walkGlob
 
 import
   parse_setting,
+  rule_procs,
   scan,
   types
 
@@ -137,11 +139,14 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
         ),
       ),
     )
-      
+
   return Setting(
     ignores: settingJson["ignores"].getElems.mapIt(it.getStr),
     regulations: regulations,
   )
+
+
+func containsGlob(path: string): bool = "*" in path
 
 
 proc scan*(
@@ -151,27 +156,35 @@ proc scan*(
     fn: proc()
 ): ScanResult =
   setCurrentDir(workingDirPath)
+
   for regulation in setting.regulations:
-    let matchedPathsByGlob =
-      walkGlob(regulation.path).toSeq.mapIt(it.splitFile.dir).deduplicate
-    let matchedPaths =
-      if matchedPathsByGlob.len == 0: walkPattern(regulation.path).toSeq
-      else: matchedPathsByGlob
-    for matchedPath in matchedPaths:
-      for item in walkDir(matchedPath):
+    let matchedDirPaths =
+      if regulation.path.containsGlob:
+        # Globで取りこぼすディレクトリパスが存在するのか？
+        let temp = walkGlob(regulation.path).toSeq.mapIt(it.splitFile.dir).deduplicate
+        if temp.len == 0:
+          walkPattern(regulation.path).toSeq
+        else:
+          temp
+      else:
+        walkPattern(regulation.path).toSeq
+
+    for matchedDirPath in matchedDirPaths:
+      for item in walkDir(matchedDirPath):
         result.scannedItemsNumber += 1
-        if isIgnore(item.path.relativePath(matchedPath), setting.ignores):
+        # TODO: ignoreの仕様を再考
+        if isIgnore(item.path.relativePath(matchedDirPath), setting.ignores):
           continue
 
         if isIgnore(
-          item.path.relativePath(matchedPath),
+          item.path.relativePath(matchedDirPath),
           if regulation.ignores.isSome: regulation.ignores.get
           else: @[],
         ):
           continue
 
-        let scanningFailureReasons = item.scan(regulation)
-        if scanningFailureReasons.len == 0:
+        let violations = item.scan(regulation)
+        if violations.len == 0:
           continue
 
         result.violationItems.add((
@@ -179,5 +192,5 @@ proc scan*(
             if unexpandTilde: item.path.unexpandTilde
             else: item.path,
           itemType: item.itemType,
-          violations: scanningFailureReasons,
+          violations: violations,
         ))

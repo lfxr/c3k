@@ -20,11 +20,11 @@ type ComparisonOperator* = enum
   equal              = "==",
 
 
-type DataUnit* = enum
-  byte = 1,
-  kibibyte = 1024,
-  mebibyte = 1024 ^ 2,
-  gibibyte = 1024 ^ 3,
+type DataUnit = enum
+  byte = 1
+  kibibyte = 1024
+  mebibyte = 1024 ^ 2
+  gibibyte = 1024 ^ 3
 
 
 type Size* = tuple[
@@ -114,7 +114,7 @@ type Error* = object of CatchableError
       osErrorObject*: ref OSError
 
 
-type ScanningFailureReason* {.pure.} = enum
+type ViolationKind* {.pure.} = enum
   itemType,
   itemFullname,
   itemName,
@@ -128,7 +128,7 @@ type ScanningFailureReason* {.pure.} = enum
 
 
 type Violation* = tuple[
-  kind: ScanningFailureReason,
+  kind: ViolationKind,
   expected, actual: string,
 ]
 
