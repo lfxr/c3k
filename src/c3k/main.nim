@@ -172,15 +172,16 @@ proc scan*(
     for matchedDirPath in matchedDirPaths:
       for item in walkDir(matchedDirPath):
         result.scannedItemsNumber += 1
-        # if isIgnore(item.path.relativePath(matchedPath), setting.ignores):
-        #   continue
+        # TODO: ignoreの仕様を再考
+        if isIgnore(item.path.relativePath(matchedDirPath), setting.ignores):
+          continue
 
-        # if isIgnore(
-        #   item.path.relativePath(matchedPath),
-        #   if regulation.ignores.isSome: regulation.ignores.get
-        #   else: @[],
-        # ):
-        #   continue
+        if isIgnore(
+          item.path.relativePath(matchedDirPath),
+          if regulation.ignores.isSome: regulation.ignores.get
+          else: @[],
+        ):
+          continue
 
         let violations = item.scan(regulation)
         if violations.len == 0:
