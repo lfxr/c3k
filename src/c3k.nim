@@ -14,37 +14,37 @@ const mlm = multiLangMessages
 let
   appDirPath = getConfigDir() / "c3k"
   settingFilePath = appDirPath / "c3k.setting.yaml"
-  m17nEcho = m17nEcho(ja_JP)
+  echo = echoM17n(ja_JP)
 
 
 proc initCommand(args: seq[string]) =
-  m17nEcho mlm.startingInitialization
+  echo mlm.startingInitialization
 
   # アプリディレクトリが存在しない場合は作成する
   if not appDirPath.dirExists:
-    m17nEcho mlm.creatingAppDirectory
+    echo mlm.creatingAppDirectory
     createDir appDirPath
 
   # 設定ファイルが存在しない場合は作成する
   if not settingFilePath.fileExists:
-    m17nEcho mlm.creatingSettingFile
+    echo mlm.creatingSettingFile
     let settingFile = open(settingFilePath, fmWrite)
     defer: settingFile.close()
     try:
       settingFile.write("")
     except:
-      m17nEcho mlm.failedToCreateSettingFile
+      echo mlm.failedToCreateSettingFile
       return
-    m17nEcho mlm.settingFileCreated
-  m17nEcho mlm.initializationFinished
+    echo mlm.settingFileCreated
+  echo mlm.initializationFinished
 
 
 proc scanCommand(args: seq[string]) =
   if not settingFilePath.fileExists:
-    m17nEcho mlm.noSettingFileDetected
+    echo mlm.noSettingFileDetected
     return
-  m17nEcho mlm.usingXAsASettingFile(settingFilePath)
-  m17nEcho mlm.loadingAndParsingSettingFile
+  echo mlm.usingXAsASettingFile(settingFilePath)
+  echo mlm.loadingAndParsingSettingFile
   # let settingYaml = loadYaml(settingFilePath)
   # let setting = parseSettingsYaml(settingYaml)
   let settingJson = loadJson(settingFilePath)
@@ -54,14 +54,14 @@ proc scanCommand(args: seq[string]) =
   let scanResult = scan(setting, appDirPath, fn=proc()=discard)
   let timeTakenForScanMilliseconds = (cpuTime() - t1) * 1000
 
-  m17nEcho mlm.scanFinishedSuccessfully
+  echo mlm.scanFinishedSuccessfully
   # if not scanResult.succeeded:
-  m17nEcho mlm.XImproperItemsOutOfYItemFound(
+  echo mlm.XImproperItemsOutOfYItemFound(
     scanResult.violationItems.len, scanResult.scannedItemsNumber
   )
-  m17nEcho mlm.timeTakenForScanWasXMilliseconds(timeTakenForScanMilliseconds)
-  # m17nEcho mlm.scanResult(scanResult)
-  echo scanResult.format
+  echo mlm.timeTakenForScanWasXMilliseconds(timeTakenForScanMilliseconds)
+  # echo mlm.scanResult(scanResult)
+  system.echo scanResult.format
 
 
 when isMainModule:
