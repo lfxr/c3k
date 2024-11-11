@@ -30,6 +30,6 @@ func serialize(message: Message): string =
   # return &"""[{prefix.text}]: {body.emoji} {body.text}"""
 
 
-func m17nEcho*(lang: Language): proc(message: MultiLangMessage) =
+func echoM17n*(lang: Language): proc(message: MultiLangMessage) =
   proc(message: MultiLangMessage) =
     echo m17n(lang)(message).serialize

@@ -6,7 +6,7 @@ import
   terminaltables
 
 import
-  types
+  c3k/types
 
 
 proc format*(scanResult: ScanResult): string = 
