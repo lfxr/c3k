@@ -20,7 +20,7 @@ type ComparisonOperator* = enum
   equal              = "==",
 
 
-type DataUnit = enum
+type DataUnit* = enum
   byte = 1
   kibibyte = 1024
   mebibyte = 1024 ^ 2

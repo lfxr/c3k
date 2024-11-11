@@ -5,9 +5,9 @@ import
 import
   m17n,
   messages,
+  scan_result,
   types,
-  c3k/main,
-  c3k/scan_result
+  c3k/main
 
 
 const mlm = multiLangMessages
