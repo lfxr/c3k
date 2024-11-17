@@ -42,7 +42,7 @@ func metaData*(item: Item): ItemMetaData =
 
 type RuleProcResult = tuple[
   isViolated: bool,
-  violation: Violation,
+  violation: Option[Violation],
 ]
 
 
@@ -55,7 +55,7 @@ func itemType(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   if item.itemType notin rule.get:
     return (
       isViolated: true,
-      violation: (
+      violation: option (
         kind: ViolationKind.itemType,
         expected: $rule.get,
         actual: $item.itemType
@@ -72,7 +72,7 @@ func ext(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   if item.ext != rule.get:
     return (
       isViolated: true,
-      violation: (
+      violation: option (
         kind: ViolationKind.ext,
         expected: rule.get,
         actual: item.ext
@@ -89,7 +89,7 @@ func exts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   if item.ext notin rule.get:
     return (
       isViolated: true,
-      violation: (
+      violation: option (
         kind: ViolationKind.ext,
         expected: $rule.get,
         actual: item.ext
