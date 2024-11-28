@@ -66,30 +66,6 @@ type Setting* = object
   regulations*: seq[Regulation]
 
 
-type RuleYaml* = object
-  path*: string
-  ignores* {.defaultVal: none(seq[string]).}: Option[seq[string]]
-  itemTypes* {.defaultVal: none(seq[ItemType]).}: Option[seq[ItemType]]
-  itemFullname* {.defaultVal: none(string).}: Option[string]
-  itemFullnames* {.defaultVal: none(seq[string]).}: Option[seq[string]]
-  itemName* {.defaultVal: none(string).}: Option[string]
-  itemNames* {.defaultVal: none(seq[string]).}: Option[seq[string]]
-  ext* {.defaultVal: none(string).}: Option[string]
-  exts* {.defaultVal: none(seq[string]).}: Option[seq[string]]
-  itemSize* {.defaultVal: none(string).}: Option[string]
-  fileFullname* {.defaultVal: none(string).}: Option[string]
-  fileFullnames* {.defaultVal: none(seq[string]).}: Option[seq[string]]
-  fileName* {.defaultVal: none(string).}: Option[string]
-  fileNames* {.defaultVal: none(seq[string]).}: Option[seq[string]]
-  fileSize* {.defaultVal: none(string).}: Option[string]
-  dirName* {.defaultVal: none(string).}: Option[string]
-  dirNames* {.defaultVal: none(seq[string]).}: Option[seq[string]]
-  dirSize* {.defaultVal: none(string).}: Option[string]
-
-
-type SettingYaml* = object
-  ignores*: seq[string]
-  regulations*: seq[RuleYaml]
 
 
 type Item* = tuple[

@@ -12,6 +12,7 @@ bin           = @["c3k"]
 # Dependencies
 
 requires "nim >= 2.0.2"
+requires "yaml == 2.1.1"
 requires "regex == 0.25.0"
 requires "unicodedb == 0.12.0"
 requires "glob == 0.11.3"

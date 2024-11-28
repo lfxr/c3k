@@ -1,10 +1,10 @@
 import
   nre,
   options,
-  os,
   sequtils
 
 import
+  utils/item,
   types
 
 
@@ -18,26 +18,6 @@ func find(target, pattern: string): bool =
 
 func isIgnore*(path: string, ignores: seq[string]): bool =
   ignores.filterIt(path.find(it)).len > 0
-
-
-func itemType*(item: Item): ItemType =
-  if item.kind == pcFile: file
-  else: dir
-
-
-type ItemMetaData = tuple[
-  path: string,
-  itemType: ItemType, 
-  ext: string,
-]
-
-
-func metaData*(item: Item): ItemMetaData =
-  (
-    path: item.path,
-    itemType: itemType(item),
-    ext: item.path.splitFile.ext,
-  )
 
 
 type RuleProcResult = tuple[
