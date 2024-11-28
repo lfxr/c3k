@@ -11,7 +11,10 @@ import
 from glob import walkGlob
 
 import
-  utils/item,
+  utils/[
+    item,
+    path
+  ],
   parse_setting,
   rule_procs,
   scan,
