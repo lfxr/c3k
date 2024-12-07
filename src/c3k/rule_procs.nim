@@ -1,23 +1,48 @@
 import
-  nre,
   options,
-  sequtils
+  os,
+  sequtils,
+  strutils
+
+import
+  glob,
+  regex
 
 import
   utils/item,
   types
 
 
-func sandwichWithAnchors(pattern: string): string =
-  "^" & pattern & "$"
-
-
-func find(target, pattern: string): bool =
-  target.find(pattern.sandwichWithAnchors.re).isSome
-
-
 func isIgnore*(path: string, ignores: seq[string]): bool =
-  ignores.filterIt(path.find(it)).len > 0
+  type StringType = enum
+    literal, glob, regex
+  type MagicString = tuple[
+    stringType: StringType,
+    value: string,
+  ]
+  func type(s: string): StringType =
+    if s.startsWith("r:"):
+      StringType.regex
+    elif s.startsWith("g:"):
+      StringType.glob
+    else:
+      StringType.literal
+  func deserializeMagicString(s: string): MagicString =
+    (
+      stringType: s.type,
+      value:
+        if s.type == StringType.literal: s
+        else: s[2..^1]
+    )
+  # a.txt, *.ini, 
+  ignores
+    .map(deserializeMagicString)
+    .filterIt(
+      case it.stringType:
+        of StringType.literal: it.value == path.lastPathPart
+        of StringType.glob:    path.lastPathPart.matches(it.value.glob)
+        of StringType.regex:   path.lastPathPart.match(re2 it.value)
+    ).len > 0
 
 
 type RuleProcResult = tuple[
