@@ -1,12 +1,12 @@
 import
   json,
-  nre,
   sequtils,
   streams,
   strutils,
   tables
 
 import
+  regex,
   yaml,
   yaml/parser,
   yaml/tojson
@@ -50,7 +50,7 @@ type SettingYaml* = object
 
 
 func parseSize*(size: string): Size =
-  let rawSize = size.split(re"(<=|>=|<|>|\d+)").filterIt(it != "")
+  let rawSize = size.split(re2"(<=|>=|<|>|\d+)").filterIt(it != "")
   result.comparisonOperator =
     case rawSize[0]:
     of $lessThan: lessThan

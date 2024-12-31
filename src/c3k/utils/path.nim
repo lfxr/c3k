@@ -1,7 +1,9 @@
 import
-  nre,
   os,
   strutils
+
+import
+  regex
 
 
 func unexpandTilde(path, homeDirPath: string, dirSep: char): string =
@@ -14,7 +16,7 @@ func unexpandTilde(path, homeDirPath: string, dirSep: char): string =
       homeDirPath[0..^2]
     else:
       homeDirPath
-  let resultTemp = path.replace(re("^" & trimmedHomeDirPath), "~")
+  let resultTemp = path.replace(re2("^" & trimmedHomeDirPath), "~")
   return
     if resultTemp == "~": resultTemp & dirSep
     else: resultTemp
