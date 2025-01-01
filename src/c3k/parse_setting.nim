@@ -33,6 +33,8 @@ type RuleYaml* = object
   itemNames* {.defaultVal: none(seq[string]).}: Option[seq[string]]
   ext* {.defaultVal: none(string).}: Option[string]
   exts* {.defaultVal: none(seq[string]).}: Option[seq[string]]
+  subExt* {.defaultVal: none(string).}: Option[string]
+  subExts* {.defaultVal: none(seq[string]).}: Option[seq[string]]
   itemSize* {.defaultVal: none(string).}: Option[string]
   fileFullname* {.defaultVal: none(string).}: Option[string]
   fileFullnames* {.defaultVal: none(seq[string]).}: Option[seq[string]]
@@ -99,6 +101,8 @@ proc parseSettingYaml*(settingYaml: SettingYaml): Setting =
           itemNames: it.itemNames,
           ext: it.ext,
           exts: it.exts,
+          subExt: it.subExt,
+          subExts: it.subExts,
           itemSize:
             if it.itemSize.isSome: some(it.itemSize.get.parseSize)
             else: none(Size),
@@ -174,6 +178,8 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
           itemNames: generateStringSeqRule(ruleJson{"itemNames"}),
           ext: generateRule(ruleJson{"ext"}),
           exts: generateStringSeqRule(ruleJson{"exts"}),
+          subExt: generateRule(ruleJson{"subExt"}),
+          subExts: generateStringSeqRule(ruleJson{"subExts"}),
           itemSize: generateSizeRule(ruleJson{"itemSize"}),
           fileFullname: generateRule(ruleJson{"fileFullname"}),
           fileFullnames: generateStringSeqRule(ruleJson{"fileFullnames"}),

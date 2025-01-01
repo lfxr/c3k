@@ -95,9 +95,43 @@ func exts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
     return (
       isViolated: true,
       violation: option (
-        kind: ViolationKind.ext,
+        kind: ViolationKind.exts,
         expected: $rule.get,
         actual: item.ext
+      )
+    )
+
+
+func subExt(item: ItemMetaData, regulation: Regulation): RuleProcResult =
+  result.isViolated = false
+
+  let rule = regulation.rules.childItems.subExt
+  if rule.isNone:
+    return
+  if item.subExt != rule.get:
+    return (
+      isViolated: true,
+      violation: option (
+        kind: ViolationKind.subExt,
+        expected: rule.get,
+        actual: item.subExt
+      )
+    )
+
+
+func subExts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
+  result.isViolated = false
+
+  let rule = regulation.rules.childItems.subExts
+  if rule.isNone:
+    return
+  if item.subExt notin rule.get:
+    return (
+      isViolated: true,
+      violation: option (
+        kind: ViolationKind.subExts,
+        expected: $rule.get,
+        actual: item.subExt
       )
     )
 
@@ -113,6 +147,8 @@ let RuleProcs*: seq[RuleProc] = @[
   (procedure: itemType, targetItemTypes: @[file, dir]),
   (procedure: ext, targetItemTypes: @[file]),
   (procedure: exts, targetItemTypes: @[file]),
+  (procedure: subExt, targetItemTypes: @[file]),
+  (procedure: subExts, targetItemTypes: @[file]),
   # (function: ext, targetItemTypes: @[file]),
   # (function: itemSize, targetItemTypes: @[file, dir]),
 ]
