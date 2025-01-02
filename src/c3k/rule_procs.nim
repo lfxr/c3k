@@ -51,7 +51,7 @@ type RuleProcResult = tuple[
 ]
 
 
-func itemType(item: ItemMetaData, regulation: Regulation): RuleProcResult =
+func itemTypes(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
   let rule = regulation.rules.childItems.itemTypes
@@ -144,7 +144,7 @@ type RuleProc = tuple[
 
 
 let RuleProcs*: seq[RuleProc] = @[
-  (procedure: itemType, targetItemTypes: @[file, dir]),
+  (procedure: itemTypes, targetItemTypes: @[file, dir]),
   (procedure: ext, targetItemTypes: @[file]),
   (procedure: exts, targetItemTypes: @[file]),
   (procedure: subExt, targetItemTypes: @[file]),
