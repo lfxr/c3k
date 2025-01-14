@@ -180,7 +180,7 @@ let metaRuleProcs*: seq[MetaRuleProc] = @[
 ]
 
 
-let RuleProcs*: seq[RuleProc] = @[
+let childItemRuleProcs*: seq[RuleProc] = @[
   (procedure: itemTypes, targetItemTypes: @[file, dir]),
   (procedure: ext, targetItemTypes: @[file]),
   (procedure: exts, targetItemTypes: @[file]),
