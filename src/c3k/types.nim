@@ -34,11 +34,18 @@ type Size* = tuple[
 ]
 
 
+type Existence* = enum
+  required = "required",
+  disallowed = "disallowed",
+ 
+
 type Regulation* = tuple[
   path: string,
   ignores: Option[seq[string]],
   rules: tuple[
-    currentDir: string, # 仮
+    currentDir: tuple[
+      existence: Option[Existence],
+    ], # 仮
     childItems: tuple[
       itemTypes: Option[seq[ItemType]],
       itemFullname: Option[string],
@@ -93,6 +100,7 @@ type Error* = object of CatchableError
 
 
 type ViolationKind* {.pure.} = enum
+  existence,
   itemType,
   itemFullname,
   itemName,

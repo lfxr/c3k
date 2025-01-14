@@ -51,6 +51,32 @@ type RuleProcResult = tuple[
 ]
 
 
+proc existence(regulation: Regulation): RuleProcResult =
+  result.isViolated = false
+
+  let rule = regulation.rules.currentDir.existence
+  if rule.isNone:
+    return
+  if rule.get == required and not dirExists(regulation.path):
+    return (
+      isViolated: true,
+      violation: option (
+        kind: ViolationKind.existence,
+        expected: $rule.get,
+        actual: "not exist",
+      )
+    )
+  if rule.get == disallowed and dirExists(regulation.path):
+    return (
+      isViolated: true,
+      violation: option (
+        kind: ViolationKind.existence,
+        expected: $rule.get,
+        actual: "exist",
+      )
+    )
+
+
 func itemTypes(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
@@ -136,10 +162,21 @@ func subExts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
     )
 
 
+type MetaRuleProc = tuple[
+  procedure:
+    proc(regulation: Regulation): RuleProcResult {.nimcall.},
+]
+
+
 type RuleProc = tuple[
   procedure:
     proc(item: ItemMetaData, regulation: Regulation): RuleProcResult {.nimcall.},
   targetItemTypes: seq[ItemType]
+]
+
+
+let metaRuleProcs*: seq[MetaRuleProc] = @[
+  (procedure: existence),
 ]
 
 

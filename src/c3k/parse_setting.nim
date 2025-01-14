@@ -26,6 +26,10 @@ const DataUnits = (
 type RuleYaml* = object
   path*: string
   ignores* {.defaultVal: none(seq[string]).}: Option[seq[string]]
+  # meta rules
+  existence* {.defaultVal: none(Existence).}: Option[Existence]
+
+  # child item rules
   itemTypes* {.defaultVal: none(seq[ItemType]).}: Option[seq[ItemType]]
   itemFullname* {.defaultVal: none(string).}: Option[string]
   itemFullnames* {.defaultVal: none(seq[string]).}: Option[seq[string]]
@@ -92,7 +96,9 @@ proc parseSettingYaml*(settingYaml: SettingYaml): Setting =
       path: it.path,
       ignores: it.ignores,
       rules: (
-        currentDir: "",
+        currentDir: (
+          existence: it.existence,
+        ),
         childItems: (
           itemTypes: it.itemTypes,
           itemFullname: it.itemFullname,
@@ -149,6 +155,16 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
       none(seq[string])
     else:
       some ruleJson.getElems.mapIt(it.getStr)
+  func generateExistenceRule(ruleJson: JsonNode): Option[Existence] =
+    if ruleJson == nil:
+      none(Existence)
+    else:
+      some(
+        case ruleJson.getStr:
+          of "required": Existence.required
+          of "disallowed": Existence.disallowed
+          else: required
+      )
   func generateTypesRule(ruleJson: JsonNode): Option[seq[ItemType]] =
     if ruleJson == nil:
       none(seq[ItemType])
@@ -169,7 +185,9 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
       path: key,
       ignores: generateIgnoresRule(ruleJson{"ignores"}),
       rules: (
-        currentDir: "",
+        currentDir: (
+          existence: generateExistenceRule(ruleJson{"existence"}),
+        ),
         childItems: (
           itemTypes: generateTypesRule(ruleJson{"itemTypes"}),
           itemFullname: generateRule(ruleJson{"itemFullname"}),
