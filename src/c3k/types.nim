@@ -43,10 +43,10 @@ type Regulation* = tuple[
   path: string,
   ignores: Option[seq[string]],
   rules: tuple[
-    currentDir: tuple[
+    metaRule: tuple[
       existence: Option[Existence],
     ], # 仮
-    childItems: tuple[
+    childItemRule: tuple[
       itemTypes: Option[seq[ItemType]],
       itemFullname: Option[string],
       itemFullnames: Option[seq[string]],

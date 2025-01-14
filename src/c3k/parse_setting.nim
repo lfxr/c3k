@@ -96,10 +96,10 @@ proc parseSettingYaml*(settingYaml: SettingYaml): Setting =
       path: it.path,
       ignores: it.ignores,
       rules: (
-        currentDir: (
+        metaRule: (
           existence: it.existence,
         ),
-        childItems: (
+        childItemRule: (
           itemTypes: it.itemTypes,
           itemFullname: it.itemFullname,
           itemFullnames: it.itemFullnames,
@@ -185,10 +185,10 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
       path: key,
       ignores: generateIgnoresRule(ruleJson{"ignores"}),
       rules: (
-        currentDir: (
+        metaRule: (
           existence: generateExistenceRule(ruleJson{"existence"}),
         ),
-        childItems: (
+        childItemRule: (
           itemTypes: generateTypesRule(ruleJson{"itemTypes"}),
           itemFullname: generateRule(ruleJson{"itemFullname"}),
           itemFullnames: generateStringSeqRule(ruleJson{"itemFullnames"}),

@@ -54,7 +54,7 @@ type RuleProcResult = tuple[
 proc existence(regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
-  let rule = regulation.rules.currentDir.existence
+  let rule = regulation.rules.metaRule.existence
   if rule.isNone:
     return
   if rule.get == required and not dirExists(regulation.path):
@@ -80,7 +80,7 @@ proc existence(regulation: Regulation): RuleProcResult =
 func itemTypes(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
-  let rule = regulation.rules.childItems.itemTypes
+  let rule = regulation.rules.childItemRule.itemTypes
   if rule.isNone:
     return
   if item.itemType notin rule.get:
@@ -97,7 +97,7 @@ func itemTypes(item: ItemMetaData, regulation: Regulation): RuleProcResult =
 func ext(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
-  let rule = regulation.rules.childItems.ext
+  let rule = regulation.rules.childItemRule.ext
   if rule.isNone:
     return
   if item.ext != rule.get:
@@ -114,7 +114,7 @@ func ext(item: ItemMetaData, regulation: Regulation): RuleProcResult =
 func exts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
-  let rule = regulation.rules.childItems.exts
+  let rule = regulation.rules.childItemRule.exts
   if rule.isNone:
     return
   if item.ext notin rule.get:
@@ -131,7 +131,7 @@ func exts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
 func subExt(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
-  let rule = regulation.rules.childItems.subExt
+  let rule = regulation.rules.childItemRule.subExt
   if rule.isNone:
     return
   if item.subExt != rule.get:
@@ -148,7 +148,7 @@ func subExt(item: ItemMetaData, regulation: Regulation): RuleProcResult =
 func subExts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
-  let rule = regulation.rules.childItems.subExts
+  let rule = regulation.rules.childItemRule.subExts
   if rule.isNone:
     return
   if item.subExt notin rule.get:
