@@ -51,10 +51,36 @@ type RuleProcResult = tuple[
 ]
 
 
-func itemType(item: ItemMetaData, regulation: Regulation): RuleProcResult =
+proc existence(regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
-  let rule = regulation.rules.childItems.itemTypes
+  let rule = regulation.rules.metaRule.existence
+  if rule.isNone:
+    return
+  if rule.get == required and not dirExists(regulation.path):
+    return (
+      isViolated: true,
+      violation: option (
+        kind: ViolationKind.existence,
+        expected: $rule.get,
+        actual: "not exist",
+      )
+    )
+  if rule.get == disallowed and dirExists(regulation.path):
+    return (
+      isViolated: true,
+      violation: option (
+        kind: ViolationKind.existence,
+        expected: $rule.get,
+        actual: "exist",
+      )
+    )
+
+
+func itemTypes(item: ItemMetaData, regulation: Regulation): RuleProcResult =
+  result.isViolated = false
+
+  let rule = regulation.rules.childItemRule.itemTypes
   if rule.isNone:
     return
   if item.itemType notin rule.get:
@@ -71,7 +97,7 @@ func itemType(item: ItemMetaData, regulation: Regulation): RuleProcResult =
 func ext(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
-  let rule = regulation.rules.childItems.ext
+  let rule = regulation.rules.childItemRule.ext
   if rule.isNone:
     return
   if item.ext != rule.get:
@@ -88,7 +114,7 @@ func ext(item: ItemMetaData, regulation: Regulation): RuleProcResult =
 func exts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
-  let rule = regulation.rules.childItems.exts
+  let rule = regulation.rules.childItemRule.exts
   if rule.isNone:
     return
   if item.ext notin rule.get:
@@ -105,7 +131,7 @@ func exts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
 func subExt(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
-  let rule = regulation.rules.childItems.subExt
+  let rule = regulation.rules.childItemRule.subExt
   if rule.isNone:
     return
   if item.subExt != rule.get:
@@ -122,7 +148,7 @@ func subExt(item: ItemMetaData, regulation: Regulation): RuleProcResult =
 func subExts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
   result.isViolated = false
 
-  let rule = regulation.rules.childItems.subExts
+  let rule = regulation.rules.childItemRule.subExts
   if rule.isNone:
     return
   if item.subExt notin rule.get:
@@ -136,6 +162,12 @@ func subExts(item: ItemMetaData, regulation: Regulation): RuleProcResult =
     )
 
 
+type MetaRuleProc = tuple[
+  procedure:
+    proc(regulation: Regulation): RuleProcResult {.nimcall.},
+]
+
+
 type RuleProc = tuple[
   procedure:
     proc(item: ItemMetaData, regulation: Regulation): RuleProcResult {.nimcall.},
@@ -143,8 +175,13 @@ type RuleProc = tuple[
 ]
 
 
-let RuleProcs*: seq[RuleProc] = @[
-  (procedure: itemType, targetItemTypes: @[file, dir]),
+let metaRuleProcs*: seq[MetaRuleProc] = @[
+  (procedure: existence),
+]
+
+
+let childItemRuleProcs*: seq[RuleProc] = @[
+  (procedure: itemTypes, targetItemTypes: @[file, dir]),
   (procedure: ext, targetItemTypes: @[file]),
   (procedure: exts, targetItemTypes: @[file]),
   (procedure: subExt, targetItemTypes: @[file]),

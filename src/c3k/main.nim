@@ -35,6 +35,15 @@ proc scan*(
   setCurrentDir(workingDirPath)
 
   for regulation in setting.regulations:
+    block:
+      let violations = regulation.scan
+      if violations.len > 0:
+        result.violationItems.add((
+          path: regulation.path,
+          itemType: ItemType.dir,
+          violations: violations,
+        ))
+
     let matchedDirPaths =
       if regulation.path.containsGlob:
         # Globで取りこぼすディレクトリパスが存在するのか？
