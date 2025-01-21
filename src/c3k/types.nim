@@ -37,35 +37,41 @@ type Size* = tuple[
 type Existence* = enum
   required = "required",
   disallowed = "disallowed",
+
+
+type MetaRules* = tuple[
+  existence: Option[Existence],
+]
+
+
+type ChildItemRules* = tuple[
+  itemTypes:     Option[seq[ItemType]],
+  itemFullname:  Option[string],
+  itemFullnames: Option[seq[string]],
+  itemName:      Option[string],
+  itemNames:     Option[seq[string]],
+  ext:           Option[string],
+  exts:          Option[seq[string]],
+  subExt:        Option[string],
+  subExts:       Option[seq[string]],
+  itemSize:      Option[Size],
+  fileFullname:  Option[string],
+  fileFullnames: Option[seq[string]],
+  fileName:      Option[string],
+  fileNames:     Option[seq[string]],
+  fileSize:      Option[Size],
+  dirName:       Option[string],
+  dirNames:      Option[seq[string]],
+  dirSize:       Option[Size],
+]
  
 
 type Regulation* = tuple[
   path: string,
   ignores: Option[seq[string]],
   rules: tuple[
-    metaRule: tuple[
-      existence: Option[Existence],
-    ], # 仮
-    childItemRule: tuple[
-      itemTypes: Option[seq[ItemType]],
-      itemFullname: Option[string],
-      itemFullnames: Option[seq[string]],
-      itemName: Option[string],
-      itemNames: Option[seq[string]],
-      ext: Option[string],
-      exts: Option[seq[string]],
-      subExt: Option[string],
-      subExts: Option[seq[string]],
-      itemSize: Option[Size],
-      fileFullname: Option[string],
-      fileFullnames: Option[seq[string]],
-      fileName: Option[string],
-      fileNames: Option[seq[string]],
-      fileSize: Option[Size],
-      dirName: Option[string],
-      dirNames: Option[seq[string]],
-      dirSize: Option[Size],
-    ],
+    metaRules: MetaRules,
+    childItemRules: ChildItemRules,
   ],
 ]
 
