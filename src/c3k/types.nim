@@ -81,8 +81,6 @@ type Setting* = object
   regulations*: seq[Regulation]
 
 
-
-
 type Item* = tuple[
   kind: PathComponent,
   path: string,
