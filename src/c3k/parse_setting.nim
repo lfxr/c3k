@@ -96,10 +96,10 @@ proc parseSettingYaml*(settingYaml: SettingYaml): Setting =
       path: it.path,
       ignores: it.ignores,
       rules: (
-        metaRule: (
+        metaRules: (
           existence: it.existence,
         ),
-        childItemRule: (
+        childItemRules: (
           itemTypes: it.itemTypes,
           itemFullname: it.itemFullname,
           itemFullnames: it.itemFullnames,
@@ -185,28 +185,28 @@ proc parseSettingJson*(settingJson: JsonNode): Setting =
       path: key,
       ignores: generateIgnoresRule(ruleJson{"ignores"}),
       rules: (
-        metaRule: (
+        metaRules: (
           existence: generateExistenceRule(ruleJson{"existence"}),
         ),
-        childItemRule: (
-          itemTypes: generateTypesRule(ruleJson{"itemTypes"}),
-          itemFullname: generateRule(ruleJson{"itemFullname"}),
+        childItemRules: (
+          itemTypes:     generateTypesRule(ruleJson{"itemTypes"}),
+          itemFullname:  generateRule(ruleJson{"itemFullname"}),
           itemFullnames: generateStringSeqRule(ruleJson{"itemFullnames"}),
-          itemName: generateRule(ruleJson{"itemName"}),
-          itemNames: generateStringSeqRule(ruleJson{"itemNames"}),
-          ext: generateRule(ruleJson{"ext"}),
-          exts: generateStringSeqRule(ruleJson{"exts"}),
-          subExt: generateRule(ruleJson{"subExt"}),
-          subExts: generateStringSeqRule(ruleJson{"subExts"}),
-          itemSize: generateSizeRule(ruleJson{"itemSize"}),
-          fileFullname: generateRule(ruleJson{"fileFullname"}),
+          itemName:      generateRule(ruleJson{"itemName"}),
+          itemNames:     generateStringSeqRule(ruleJson{"itemNames"}),
+          ext:           generateRule(ruleJson{"ext"}),
+          exts:          generateStringSeqRule(ruleJson{"exts"}),
+          subExt:        generateRule(ruleJson{"subExt"}),
+          subExts:       generateStringSeqRule(ruleJson{"subExts"}),
+          itemSize:      generateSizeRule(ruleJson{"itemSize"}),
+          fileFullname:  generateRule(ruleJson{"fileFullname"}),
           fileFullnames: generateStringSeqRule(ruleJson{"fileFullnames"}),
-          fileName: generateRule(ruleJson{"fileName"}),
-          fileNames: generateStringSeqRule(ruleJson{"fileNames"}),
-          fileSize: generateSizeRule(ruleJson{"fileSize"}),
-          dirName: generateRule(ruleJson{"dirName"}),
-          dirNames: generateStringSeqRule(ruleJson{"dirNames"}),
-          dirSize: generateSizeRule(ruleJson{"dirSize"}),
+          fileName:      generateRule(ruleJson{"fileName"}),
+          fileNames:     generateStringSeqRule(ruleJson{"fileNames"}),
+          fileSize:      generateSizeRule(ruleJson{"fileSize"}),
+          dirName:       generateRule(ruleJson{"dirName"}),
+          dirNames:      generateStringSeqRule(ruleJson{"dirNames"}),
+          dirSize:       generateSizeRule(ruleJson{"dirSize"}),
         ),
       ),
     )
