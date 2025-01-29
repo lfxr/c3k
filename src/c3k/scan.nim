@@ -21,6 +21,6 @@ proc scan*(item: Item, regulation: Regulation): seq[Violation] =
   # ruleProcsを適用
   childItemRuleProcs
     .filterIt(item.metaData.itemType in it.targetItemTypes)
-    .mapIt(it.procedure(item.metaData, regulation))
+    .mapIt(it.procedure(item.metaData, regulation.rules.childItemRules))
     .filterIt(it.isViolated)
     .mapIt(it.violation.get)
