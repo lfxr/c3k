@@ -34,7 +34,7 @@ func isIgnore*(path: string, ignores: seq[string]): bool =
         if s.type == StringType.literal: s
         else: s[2..^1]
     )
-  # a.txt, *.ini, 
+  # a.txt, *.ini,
   ignores
     .map(deserializeMagicString)
     .filterIt(
@@ -45,19 +45,21 @@ func isIgnore*(path: string, ignores: seq[string]): bool =
     ).len > 0
 
 
-type RuleProcResult = tuple[
+type RuleProcResult* = tuple[
   isViolated: bool,
   violation: Option[Violation],
 ]
 
 
-proc existence(regulation: Regulation): RuleProcResult =
+proc existence(itemMetaData: ItemMetaData, metaRules: MetaRules): RuleProcResult =
+  debugEcho itemMetaData
+  debugEcho metaRules
   result.isViolated = false
 
-  let rule = regulation.rules.metaRules.existence
+  let rule = metaRules.existence
   if rule.isNone:
     return
-  if rule.get == required and not dirExists(regulation.path):
+  if rule.get == required and not dirExists(itemMetaData.path):
     return (
       isViolated: true,
       violation: option (
@@ -66,7 +68,7 @@ proc existence(regulation: Regulation): RuleProcResult =
         actual: "not exist",
       )
     )
-  if rule.get == disallowed and dirExists(regulation.path):
+  if rule.get == disallowed and dirExists(itemMetaData.path):
     return (
       isViolated: true,
       violation: option (
@@ -162,25 +164,25 @@ func subExts(item: ItemMetaData, childItemRules: ChildItemRules): RuleProcResult
     )
 
 
-type MetaRuleProc = tuple[
+type MetaRuleProc* = tuple[
   procedure:
-    proc(regulation: Regulation): RuleProcResult {.nimcall.},
+    proc(item: ItemMetaData, metaRules: MetaRules): RuleProcResult {.nimcall.},
 ]
 
 
-type ChildItemRuleProc = tuple[
+type ChildItemRuleProc* = tuple[
   procedure:
     proc(item: ItemMetaData, childItemRules: ChildItemRules): RuleProcResult {.nimcall.},
   targetItemTypes: seq[ItemType]
 ]
 
 
-let metaRuleProcs*: seq[MetaRuleProc] = @[
+const MetaRuleProcs*: seq[MetaRuleProc] = @[
   (procedure: existence),
 ]
 
 
-let childItemRuleProcs*: seq[ChildItemRuleProc] = @[
+const ChildItemRuleProcs*: seq[ChildItemRuleProc] = @[
   (procedure: itemTypes, targetItemTypes: @[file, dir]),
   (procedure: ext, targetItemTypes: @[file]),
   (procedure: exts, targetItemTypes: @[file]),

@@ -57,7 +57,7 @@ proc scanCommand(args: seq[string]) =
   echo mlm.scanFinishedSuccessfully
   # if not scanResult.succeeded:
   echo mlm.XImproperItemsOutOfYItemFound(
-    scanResult.violationItems.len, scanResult.scannedItemsNumber
+    scanResult.violatingItems.len, scanResult.scannedItemsNumber
   )
   echo mlm.timeTakenForScanWasXMilliseconds(timeTakenForScanMilliseconds)
   # echo mlm.scanResult(scanResult)

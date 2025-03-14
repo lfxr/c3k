@@ -64,7 +64,7 @@ type ChildItemRules* = tuple[
   dirNames:      Option[seq[string]],
   dirSize:       Option[Size],
 ]
- 
+
 
 type Regulation* = tuple[
   path: string,
@@ -126,11 +126,14 @@ type Violation* = tuple[
 ]
 
 
+type ViolatingItem* = tuple[
+  path: string,
+  itemType: ItemType,
+  violations: seq[Violation],
+]
+
+
 type ScanResult* = object
   scannedItemsNumber*: Natural
-  violationItemsNumber*: Natural
-  violationItems*: seq[tuple[
-    path: string,
-    itemType: ItemType,
-    violations: seq[Violation],
-  ]]
+  violatingItemsNumber*: Natural
+  violatingItems*: seq[ViolatingItem]

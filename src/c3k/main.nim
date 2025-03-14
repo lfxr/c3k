@@ -16,8 +16,8 @@ import
   ],
   parse_setting,
   rule_procs,
-  scan,
-  types
+  types,
+  verifiers
 
 export
   parse_setting
@@ -35,48 +35,61 @@ proc scan*(
   setCurrentDir(workingDirPath)
 
   for regulation in setting.regulations:
-    block:
-      let violations = regulation.scan
-      if violations.len > 0:
-        result.violationItems.add((
-          path: regulation.path,
-          itemType: ItemType.dir,
-          violations: violations,
-        ))
+    debugEcho regulation
+    result.violatingItems.add(
+      regulation.verify(
+        globalIgnores = setting.ignores,
+      )
+    )
+  echo result
 
-    let matchedDirPaths =
-      if regulation.path.containsGlob:
-        # Globで取りこぼすディレクトリパスが存在するのか？
-        let temp = walkGlob(regulation.path).toSeq.mapIt(it.splitFile.dir).deduplicate
-        if temp.len == 0:
-          walkPattern(regulation.path).toSeq
-        else:
-          temp
-      else:
-        walkPattern(regulation.path).toSeq
+  # ディスクからアイテムを取得
 
-    for matchedDirPath in matchedDirPaths:
-      for item in walkDir(matchedDirPath):
-        result.scannedItemsNumber += 1
-        # TODO: ignoreの仕様を再考
-        if isIgnore(item.path.relativePath(matchedDirPath), setting.ignores):
-          continue
 
-        if isIgnore(
-          item.path.relativePath(matchedDirPath),
-          if regulation.ignores.isSome: regulation.ignores.get
-          else: @[],
-        ):
-          continue
+  # old code block
+  # for regulation in setting.regulations:
+  #   block:
+  #     let violations = regulation.scan
+  #     if violations.len > 0:
+  #       result.violatingItems.add((
+  #         path: regulation.path,
+  #         itemType: ItemType.dir,
+  #         violations: violations,
+  #       ))
 
-        let violations = item.scan(regulation)
-        if violations.len == 0:
-          continue
+  #   let matchedDirPaths =
+  #     if regulation.path.containsGlob:
+  #       # Globで取りこぼすディレクトリパスが存在するのか？
+  #       let temp = walkGlob(regulation.path).toSeq.mapIt(it.splitFile.dir).deduplicate
+  #       if temp.len == 0:
+  #         walkPattern(regulation.path).toSeq
+  #       else:
+  #         temp
+  #     else:
+  #       walkPattern(regulation.path).toSeq
 
-        result.violationItems.add((
-          path:
-            if unexpandTilde: item.path.unexpandTilde
-            else: item.path,
-          itemType: item.itemType,
-          violations: violations,
-        ))
+  #   for matchedDirPath in matchedDirPaths:
+  #     for item in walkDir(matchedDirPath):
+  #       result.scannedItemsNumber += 1
+  #       # TODO: ignoreの仕様を再考
+  #       if isIgnore(item.path.relativePath(matchedDirPath), setting.ignores):
+  #         continue
+
+  #       if isIgnore(
+  #         item.path.relativePath(matchedDirPath),
+  #         if regulation.ignores.isSome: regulation.ignores.get
+  #         else: @[],
+  #       ):
+  #         continue
+
+  #       let violations = item.scan(regulation)
+  #       if violations.len == 0:
+  #         continue
+
+  #       result.violatingItems.add((
+  #         path:
+  #           if unexpandTilde: item.path.unexpandTilde
+  #           else: item.path,
+  #         itemType: item.itemType,
+  #         violations: violations,
+  #       ))

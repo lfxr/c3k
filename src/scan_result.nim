@@ -9,7 +9,7 @@ import
   c3k/types
 
 
-proc format*(scanResult: ScanResult): string = 
+proc format*(scanResult: ScanResult): string =
   let t2 = newUnicodeTable()
   t2.separateRows = false
   t2.setHeaders(
@@ -19,10 +19,10 @@ proc format*(scanResult: ScanResult): string =
       newCell("理由", rightpad=5),
     ]
   )
-  for violationItem in scanResult.violationItems:
+  for violatingItem in scanResult.violatingItems:
     t2.addRow(@[
-      violationItem.path,
-      $violationItem.itemType,
-      violationItem.violations.mapIt($it.kind).join(", "),
+      violatingItem.path,
+      $violatingItem.itemType,
+      violatingItem.violations.mapIt($it.kind).join(", "),
     ])
   printTable(t2)
