@@ -37,6 +37,7 @@ func verify(
 ): seq[ViolatingItem] =
   for itemMetaData in itemMetaDataSeq:
     let violations = ChildItemRuleProcs
+        .filterIt(it.targetItemTypes.contains(itemMetaData.itemType))
         .map(
           proc (childItemRuleProc: ChildItemRuleProc): RuleProcResult =
             childItemRuleProc.procedure(itemMetaData, childItemRules)
