@@ -11,6 +11,7 @@ func verify(itemMetadataRules: ItemMetadataRules, items: seq[ItemMetadata]): seq
   for itemMetadata in items:
     var ruleVerifierResults: seq[RuleVerifierResult] = @[]
     block:
+      ruleVerifierResults.add(itemMetadata.existence(itemMetadataRules.existence))
       ruleVerifierResults.add(itemMetadata.kinds(itemMetadataRules.kinds))
       ruleVerifierResults.add(itemMetadata.itemFullname(itemMetadataRules.itemFullname))
     let violations = ruleVerifierResults

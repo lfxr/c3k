@@ -14,6 +14,7 @@ type ItemKind* = enum
 
 
 type ItemMetadata* = tuple[
+  exists: bool,
   kind: ItemKind,
   fullName: string,
   name: string,

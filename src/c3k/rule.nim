@@ -11,10 +11,26 @@ type RuleVerifierResult* = tuple[
 ]
 
 
+func existence*(
+    itemMetadata: ItemMetadata,
+    rule: ItemMetadataRules.existence
+): RuleVerifierResult =
+  if rule.isNone:
+    return
+  if itemMetadata.exists and rule.get == disallowed or
+    (not itemMetadata.exists) and rule.get == required:
+    result.isViolated = true
+    result.violation = option (
+      kind: ViolationKind.existence,
+      expected: $rule.get,
+      actual: $itemMetadata.exists,
+    )
+
+
 func kinds*(
     itemMetadata: ItemMetadata,
     rule: ItemMetaDataRules.kinds
-): RuleVerifierResult=
+): RuleVerifierResult =
   if rule.isNone:
     return
   if itemMetadata.kind notin rule.get:

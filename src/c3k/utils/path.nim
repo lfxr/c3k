@@ -45,6 +45,10 @@ proc itemKind(path: string): ItemKind =
   else: none
 
 
+proc exists(path: string): bool =
+  path.itemKind != none
+
+
 func subExt(path: string): string =
   const DOT = '.'
   if DOT in path:
@@ -54,6 +58,7 @@ func subExt(path: string): string =
 
 proc metadata*(path: string): ItemMetadata =
   (
+    exists: path.exists,
     kind: path.itemKind,
     fullName: path.splitFile.name,
     name: path.splitFile.name & path.splitFile.ext,
