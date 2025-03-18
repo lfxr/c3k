@@ -7,9 +7,24 @@ import
   yaml
 
 
-type ItemType* = enum
+type ItemKind* = enum
+  none,
   file,
   dir,
+
+
+type ItemMetadata* = tuple[
+  kind: ItemKind,
+  fullName: string,
+  name: string,
+  ext: string,
+  subExt: string,
+]
+
+
+type Item* = object
+  path*: string
+  metadata*: ItemMetaData
 
 
 type ComparisonOperator* = enum
@@ -34,35 +49,48 @@ type Size* = tuple[
 ]
 
 
-type Existence* = enum
-  required = "required",
-  disallowed = "disallowed",
+type
+  Existence* = enum
+    required = "required",
+    disallowed = "disallowed",
+
+  FinalNewLine* = enum
+    required = "required",
+    disallowed = "disallowed",
 
 
-type MetaRules* = tuple[
-  existence: Option[Existence],
+type ItemMetadataRules* = tuple[
+  existence:        Option[Existence],
+  childItemsNumber: Option[int],
+  kinds:            Option[seq[ItemKind]],
+  itemFullname:     Option[string],
+  itemFullnames:    Option[seq[string]],
+  itemName:         Option[string],
+  itemNames:        Option[seq[string]],
+  ext:              Option[string],
+  exts:             Option[seq[string]],
+  subExt:           Option[string],
+  subExts:          Option[seq[string]],
+  itemSize:         Option[Size],
+  fileFullname:     Option[string],
+  fileFullnames:    Option[seq[string]],
+  fileName:         Option[string],
+  fileNames:        Option[seq[string]],
+  fileSize:         Option[Size],
+  dirName:          Option[string],
+  dirNames:         Option[seq[string]],
+  dirSize:          Option[Size],
 ]
 
 
-type ChildItemRules* = tuple[
-  itemTypes:     Option[seq[ItemType]],
-  itemFullname:  Option[string],
-  itemFullnames: Option[seq[string]],
-  itemName:      Option[string],
-  itemNames:     Option[seq[string]],
-  ext:           Option[string],
-  exts:          Option[seq[string]],
-  subExt:        Option[string],
-  subExts:       Option[seq[string]],
-  itemSize:      Option[Size],
-  fileFullname:  Option[string],
-  fileFullnames: Option[seq[string]],
-  fileName:      Option[string],
-  fileNames:     Option[seq[string]],
-  fileSize:      Option[Size],
-  dirName:       Option[string],
-  dirNames:      Option[seq[string]],
-  dirSize:       Option[Size],
+type ItemDataRules* = tuple[
+  finalNewLine: Option[FinalNewLine]
+]
+
+
+type Rules* = tuple[
+  itemMetadata: ItemMetadataRules,
+  itemData:     ItemDataRules,
 ]
 
 
@@ -70,8 +98,7 @@ type Regulation* = tuple[
   path: string,
   ignores: Option[seq[string]],
   rules: tuple[
-    metaRules: MetaRules,
-    childItemRules: ChildItemRules,
+    selfRules, childItemsRules: Rules,
   ],
 ]
 
@@ -79,12 +106,6 @@ type Regulation* = tuple[
 type Setting* = object
   ignores*: seq[string]
   regulations*: seq[Regulation]
-
-
-type Item* = tuple[
-  kind: PathComponent,
-  path: string,
-]
 
 
 type ErrorKind* = enum
@@ -105,7 +126,7 @@ type Error* = object of CatchableError
 
 type ViolationKind* {.pure.} = enum
   existence,
-  itemType,
+  itemKinds,
   itemFullname,
   itemName,
   ext,
@@ -128,7 +149,7 @@ type Violation* = tuple[
 
 type ViolatingItem* = tuple[
   path: string,
-  itemType: ItemType,
+  itemKind: ItemKind,
   violations: seq[Violation],
 ]
 

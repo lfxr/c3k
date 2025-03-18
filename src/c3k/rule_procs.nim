@@ -191,3 +191,14 @@ const ChildItemRuleProcs*: seq[ChildItemRuleProc] = @[
   # (function: ext, targetItemTypes: @[file]),
   # (function: itemSize, targetItemTypes: @[file, dir]),
 ]
+
+
+type ItemMetadataRuleVerifier = tuple[
+  verifier: ItemMetadataVerifier,
+  targetItemKind: seq[ItemKind],
+]
+
+
+const ItemMetadataRuleVerifiers*: seq[ItemMetadataRuleVerifier] = @[
+  (verifier: kind, targetItemKind: @[file, dir]),
+]

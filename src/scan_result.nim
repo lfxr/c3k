@@ -22,7 +22,7 @@ proc format*(scanResult: ScanResult): string =
   for violatingItem in scanResult.violatingItems:
     t2.addRow(@[
       violatingItem.path,
-      $violatingItem.itemType,
+      $violatingItem.itemKind,
       violatingItem.violations.mapIt($it.kind).join(", "),
     ])
   printTable(t2)

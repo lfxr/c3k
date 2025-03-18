@@ -1,23 +1,15 @@
 import
   options,
   os,
-  sequtils,
   strutils
 
 import
   yaml
 
-from glob import walkGlob
-
 import
-  utils/[
-    item,
-    path
-  ],
   parse_setting,
-  rule_procs,
-  types,
-  verifiers
+  regulation,
+  types
 
 export
   parse_setting
