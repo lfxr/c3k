@@ -1,7 +1,6 @@
 import
   math,
-  options,
-  os
+  options
 
 import
   yaml
