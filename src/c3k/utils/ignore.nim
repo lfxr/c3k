@@ -54,14 +54,6 @@ func ignorePredicate(patterns: seq[ref IgnorePattern]): IgnorePredicate =
         result = not pattern.isNegation
 
 
-# func combine*(predicates: seq[IgnorePredicate]): IgnorePredicate =
-#   func (path, workingDir: string): bool =
-#     for predicate in predicates:
-#       if not predicate(path, workingDir):
-#         return false
-#     return true
-
-
 when isMainModule:
   let
     patterns: seq[ref IgnorePattern] = @[
