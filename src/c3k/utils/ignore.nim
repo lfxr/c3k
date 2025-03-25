@@ -1,4 +1,5 @@
 import
+  os,
   strutils,
   sequtils
 
@@ -23,6 +24,15 @@ type IgnorePredicate = proc (
 ): bool {.noSideEffect.}
 
 
+func ignorePatternType(normalized: string): IgnorePatternType =
+  if normalized.startsWith("/"):
+    absolute
+  elif normalized.startsWith("./"):
+    relative
+  else:
+    anywhere
+
+
 func normalize(rawPattern: string): string =
   if rawPattern.startsWith("!"):
     rawPattern[1..^1]
@@ -42,6 +52,7 @@ func newIgnorePattern(rawPattern: string, appliedFrom: string): ref IgnorePatter
   result.raw = rawPattern
   # TODO: Implement pattern normalization
   result.normalized = rawPattern.normalize
+  result.patternType = result.normalized.ignorePatternType
   result.targetItemKinds = rawPattern.targetItemKinds
   result.isNegation = rawPattern.startsWith("!")
   result.appliedFrom = appliedFrom
@@ -63,15 +74,35 @@ func ignorePredicate(patterns: seq[ref IgnorePattern]): IgnorePredicate =
     for pattern in patterns:
       if itemKind notin pattern.targetItemKinds:
         continue
-      if pattern.normalized == itemPath:
-        result = not pattern.isNegation
+      case pattern.patternType:
+      of IgnorePatternType.absolute:
+        if pattern.normalized == itemPath:
+          result = not pattern.isNegation
+      of IgnorePatternType.relative:
+        let patternAbsolutePath = pattern.appliedFrom / pattern.normalized
+        if patternAbsolutePath == itemPath:
+          result = not pattern.isNegation
+      of IgnorePatternType.anywhere:
+        if itemPath.endsWith(pattern.normalized):
+          result = not pattern.isNegation
 
 
 when isMainModule:
   let
-    patterns: seq[ref IgnorePattern] = @[
+    patterns1: seq[ref IgnorePattern] = @[
       newIgnorePattern("/desktop.ini", ""),
       newIgnorePattern("!/desktop.ini", ""),
     ]
-    predicate: IgnorePredicate = ignorePredicate(patterns)
-  doAssert not predicate("/desktop.ini", file, "")
+    predicate1: IgnorePredicate = ignorePredicate(patterns1)
+  doAssert not predicate1("/desktop.ini", file, "")
+
+  let
+    patterns2: seq[ref IgnorePattern] = @[
+      newIgnorePattern("desktop.ini", ""),
+    ]
+    predicate2: IgnorePredicate = ignorePredicate(patterns2)
+  doAssert predicate2("/desktop.ini", file, "")
+  doAssert predicate2("/desktop.ini", dir, "")
+  doAssert predicate2("/path/desktop.ini", file, "")
+  doAssert predicate2("/path/to/desktop.ini", file, "")
+  doAssert not predicate2("/path/to/desktop.ini/path", file, "")
