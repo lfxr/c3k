@@ -34,10 +34,11 @@ func ignorePatternType(normalized: string): IgnorePatternType =
 
 
 func normalize(rawPattern: string): string =
+  result = rawPattern
   if rawPattern.startsWith("!"):
-    rawPattern[1..^1]
-  else:
-    rawPattern
+    result = result[1..^1]
+  if rawPattern.endsWith("/"):
+    result = result[0..^2]
 
 
 func targetItemKinds(rawPattern: string): seq[ItemKind] =
@@ -106,3 +107,12 @@ when isMainModule:
   doAssert predicate2("/path/desktop.ini", file, "")
   doAssert predicate2("/path/to/desktop.ini", file, "")
   doAssert not predicate2("/path/to/desktop.ini/path", file, "")
+
+  let
+    patterns3: seq[ref IgnorePattern] = @[
+      newIgnorePattern(".git/", ""),
+    ]
+    predicate3: IgnorePredicate = ignorePredicate(patterns3)
+  doAssert predicate3(".git", dir, "")
+  doAssert not predicate3("/.git/foo", dir, "")
+  doAssert predicate3("/foo/.git", dir, "")
