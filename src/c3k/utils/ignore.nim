@@ -20,7 +20,7 @@ type IgnorePattern = object
   appliedFrom: string
 
 type IgnorePredicate = proc (
-    itemPath: string, itemKind: ItemKind, workingDir: string
+    itemPath: string, itemKind: ItemKind
 ): bool {.noSideEffect.}
 
 
@@ -70,7 +70,7 @@ func newIgnorePattern(rawPattern: string, appliedFrom: string): ref IgnorePatter
 
 
 func ignorePredicate(patterns: seq[ref IgnorePattern]): IgnorePredicate =
-  func (itemPath: string, itemKind: ItemKind, workingDir: string): bool =
+  func (itemPath: string, itemKind: ItemKind): bool =
     result = false
     for pattern in patterns:
       if itemKind notin pattern.targetItemKinds:
@@ -95,24 +95,24 @@ when isMainModule:
       newIgnorePattern("!/desktop.ini", ""),
     ]
     predicate1: IgnorePredicate = ignorePredicate(patterns1)
-  doAssert not predicate1("/desktop.ini", file, "")
+  doAssert not predicate1("/desktop.ini", file)
 
   let
     patterns2: seq[ref IgnorePattern] = @[
       newIgnorePattern("desktop.ini", ""),
     ]
     predicate2: IgnorePredicate = ignorePredicate(patterns2)
-  doAssert predicate2("/desktop.ini", file, "")
-  doAssert predicate2("/desktop.ini", dir, "")
-  doAssert predicate2("/path/desktop.ini", file, "")
-  doAssert predicate2("/path/to/desktop.ini", file, "")
-  doAssert not predicate2("/path/to/desktop.ini/path", file, "")
+  doAssert predicate2("/desktop.ini", file)
+  doAssert predicate2("/desktop.ini", dir)
+  doAssert predicate2("/path/desktop.ini", file)
+  doAssert predicate2("/path/to/desktop.ini", file)
+  doAssert not predicate2("/path/to/desktop.ini/path", file)
 
   let
     patterns3: seq[ref IgnorePattern] = @[
       newIgnorePattern(".git/", ""),
     ]
     predicate3: IgnorePredicate = ignorePredicate(patterns3)
-  doAssert predicate3(".git", dir, "")
-  doAssert not predicate3("/.git/foo", dir, "")
-  doAssert predicate3("/foo/.git", dir, "")
+  doAssert predicate3(".git", dir)
+  doAssert not predicate3("/.git/foo", dir)
+  doAssert predicate3("/foo/.git", dir)
