@@ -64,16 +64,6 @@ func newIgnorePattern(rawPattern: string, appliedFrom: string): ref IgnorePatter
   result.appliedFrom = appliedFrom
 
 
-# func matches(pattern: ref IgnorePattern, item: ref Item): bool =
-#   return case pattern.patternType
-#   of IgnorePatternType.absolute:
-#     item.path == pattern.normalized
-#   of IgnorePatternType.relative:
-#     item.path.toLower.contains(pattern.normalized.toLower())
-#   of IgnorePatternType.anyWhere:
-#     item.path.toLower.contains(pattern.normalized.toLower())
-
-
 func ignorePredicate(patterns: seq[ref IgnorePattern]): IgnorePredicate =
   func (itemPath: string, itemKind: ItemKind): bool =
     result = false
