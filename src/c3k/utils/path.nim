@@ -6,7 +6,7 @@ import
 import
   regex
 
-from glob import walkGlob
+from glob import matches, walkGlob
 
 import
   ../types
@@ -65,3 +65,18 @@ proc metadata*(path: string): ItemMetadata =
     ext: path.splitFile.ext,
     subExt: path.subExt,
   )
+
+
+func matchesPartially*(input, pattern: string): bool =
+  if input.matches(pattern):
+    return true
+  if input.len <= 1:
+    return false
+
+  var inputComponents = input[1..^1].split("/")
+  while inputComponents.len > 0:
+    inputComponents = inputComponents[1..^1]
+    if inputComponents.join("/").matches(pattern):
+      return true
+
+  return false
