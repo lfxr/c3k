@@ -1,5 +1,8 @@
 # c3k
 
+> [!WARNING]
+> This project is experimental.
+
 Linter for your disk.
 
 ## Motivation
@@ -36,9 +39,9 @@ docs
 
 ## Installation
 
-```sh
+<!--```sh
 nimble install c3k
-```
+```-->
 
 ## CLI Tutorial
 
